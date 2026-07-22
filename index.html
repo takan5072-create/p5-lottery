@@ -21,7 +21,7 @@
         <div class="p-2 bg-amber-500 rounded-lg text-slate-900 font-extrabold text-xl">P5</div>
         <div>
           <h1 id="ui-title" class="text-xl font-bold text-amber-400">排列五 數據分析與實時看板</h1>
-          <p id="ui-subtitle" class="text-xs text-slate-400">數據來源：江蘇體彩網 (自動同步)</p>
+          <p id="ui-subtitle" class="text-xs text-slate-400">數據來源：官方開獎數據 (自動多通道同步)</p>
         </div>
       </div>
 
@@ -104,7 +104,6 @@
           <p id="ui-recommend-desc" class="text-xs text-slate-300 mb-4">綜合冷熱規律、大小比與奇偶分佈自動推算出的十組參考預測：</p>
           
           <div id="recommendedContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <!-- 10組推薦將在此處動態生成 -->
             <div class="text-xs text-slate-400 col-span-2 text-center py-4">正在生成大師預測號碼...</div>
           </div>
         </div>
@@ -153,12 +152,17 @@
 
   <script>
     const TARGET_URL = 'https://www.js-lottery.com/wfzq/p3p5/p5data';
-    const PROXY_URL = `https://corsproxy.io/?${encodeURIComponent(TARGET_URL)}`;
+    
+    // 多通道 CORS 代理清單，防止單一 Proxy 失效
+    const PROXY_LIST = [
+      `https://corsproxy.io/?${encodeURIComponent(TARGET_URL)}`,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(TARGET_URL)}`
+    ];
 
     const i18n = {
       zh: {
         title: "排列五 數據分析與實時看板",
-        subtitle: "數據來源：江蘇體彩網 (自動同步)",
+        subtitle: "數據來源：官方開獎數據 (自動多通道同步)",
         tgBtn: "聯繫 Telegram 客服",
         statusLabel: "當前狀態：",
         refreshBtn: "手動刷新數據",
@@ -172,13 +176,13 @@
         thPeriod: "期號",
         thNumbers: "開獎號碼 (萬 千 百 十 個)",
         thDate: "開獎日期",
-        loading: "正在獲取最新數據...",
-        success: "更新成功",
-        fail: "加載失敗，請手動刷新"
+        loading: "正在連線多通道獲取最新數據...",
+        success: "數據同步成功",
+        fail: "數據通道連線異常，請重新刷新"
       },
       en: {
         title: "P5 Lottery Data Analysis & Dashboard",
-        subtitle: "Source: JS Lottery (Auto Sync)",
+        subtitle: "Source: Official Lottery Data (Multi-channel Auto Sync)",
         tgBtn: "Contact Telegram Support",
         statusLabel: "Status: ",
         refreshBtn: "Refresh Data",
@@ -192,9 +196,9 @@
         thPeriod: "Draw No.",
         thNumbers: "Winning Numbers",
         thDate: "Draw Date",
-        loading: "Fetching latest data...",
-        success: "Updated successfully",
-        fail: "Failed to load, click refresh"
+        loading: "Fetching latest data via proxy...",
+        success: "Data synchronized successfully",
+        fail: "Connection failed, click to retry"
       }
     };
 
@@ -222,6 +226,21 @@
       document.getElementById('th-date').innerText = dict.thDate;
     }
 
+    async function fetchWithRetry() {
+      for (const proxy of PROXY_LIST) {
+        try {
+          const res = await fetch(proxy, { signal: AbortSignal.timeout(6000) });
+          if (res.ok) {
+            const text = await res.text();
+            if (text && text.length > 200) return text;
+          }
+        } catch (e) {
+          console.warn("Proxy channel failed, trying next...", proxy, e);
+        }
+      }
+      throw new Error("All proxy attempts failed");
+    }
+
     async function fetchData() {
       const statusText = document.getElementById('statusText');
       const tableBody = document.getElementById('lotteryTable');
@@ -231,10 +250,7 @@
       statusText.className = 'text-xs font-medium text-amber-400';
 
       try {
-        const response = await fetch(PROXY_URL);
-        if (!response.ok) throw new Error('Network response failure');
-        
-        const htmlText = await response.text();
+        const htmlText = await fetchWithRetry();
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
         const rows = doc.querySelectorAll('tr');
@@ -251,12 +267,12 @@
             const rawNumbers = cells[1].innerText.trim();
             const dateText = cells[2]?.innerText.trim() || '-';
 
-            // 嚴格清洗數據：期號必須為 5~7 位數字，且號碼包含有效數字
+            // 嚴格清洗數據
             if (/^\d{5,7}$/.test(periodText) && rawNumbers.length > 0) {
               const digits = rawNumbers.match(/\d/g);
               if (digits && digits.length >= 5) {
                 validRowsCount++;
-                const p5Balls = digits.slice(0, 5); // 精準截取前5個數字為排列五號碼
+                const p5Balls = digits.slice(0, 5);
                 
                 let ballHtml = '';
                 p5Balls.forEach(dStr => {
@@ -285,26 +301,24 @@
           statusText.innerText = `${dict.success} (${now})`;
           statusText.className = 'text-xs font-medium text-emerald-400';
 
-          // 計算並渲染 10 組推薦號碼與統計
           updateDashboard(numberFreq, bigCount, smallCount, oddCount, evenCount);
         } else {
-          throw new Error('未解析到有效的排列五號碼');
+          throw new Error('未解析到有效的開獎數據');
         }
       } catch (err) {
         console.error("Fetch error:", err);
-        tableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-amber-400">數據獲取異常，請重新刷新</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-amber-400">網路連線超時，請點擊右上方「手動刷新數據」按鈕再試一次</td></tr>`;
         statusText.innerText = dict.fail;
         statusText.className = 'text-xs font-medium text-red-400';
       }
     }
 
     function updateDashboard(freq, big, small, odd, even) {
-      // 1. 冷熱號碼排序
       const sortedFreq = Object.entries(freq)
         .map(([num, count]) => ({ num: parseInt(num, 10), count }))
         .sort((a, b) => b.count - a.count);
 
-      const hotList = sortedFreq.map(item => item.num); // 從最熱到最冷
+      const hotList = sortedFreq.map(item => item.num);
 
       // 熱門號碼 UI
       const container = document.getElementById('hotNumbersContainer');
@@ -314,15 +328,14 @@
       });
       container.innerHTML = freqHtml;
 
-      // 2. 統計數據 UI
+      // 統計數據 UI
       document.getElementById('statRatio').innerText = `大號(5-9): ${big}次 | 小號(0-4): ${small}次`;
       document.getElementById('statOddEven').innerText = `單號: ${odd}次 | 雙號: ${even}次`;
 
-      // 3. 算法生成 10 組大師推薦號碼
+      // 生成 10 組推薦號碼
       const recContainer = document.getElementById('recommendedContainer');
       let recHtml = '';
 
-      // 定義10組推薦策略矩陣
       const strategies = [
         { label: "01. 熱號突破組合", fn: () => [hotList[0], hotList[1], hotList[2], hotList[3], hotList[4]] },
         { label: "02. 極致連熱組合", fn: () => [hotList[0], hotList[1], hotList[0], hotList[2], hotList[3]] },
@@ -336,7 +349,7 @@
         { label: "10. 大師終極精選", fn: () => [hotList[0], hotList[2], hotList[1], hotList[3], hotList[5]] }
       ];
 
-      strategies.forEach((strat, index) => {
+      strategies.forEach(strat => {
         const combo = strat.fn();
         let ballsStr = '';
         combo.forEach(n => {
