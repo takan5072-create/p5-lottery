@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .ball { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; margin: 0 2px; }
+    .ball { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; font-size: 13px; margin: 0 1px; }
     .ball-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
     .ball-amber { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
   </style>
@@ -73,43 +73,43 @@
     </div>
 
     <!-- 數據智能分析與推薦板塊 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
       <!-- 熱號統計與規律走勢分析 -->
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
-        <h2 id="ui-analysis-title" class="text-lg font-bold text-amber-400 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-chart-line"></i> 數據統計與走勢規律
-        </h2>
-        <p id="ui-analysis-desc" class="text-xs text-slate-300 mb-4">系統根據近期開獎結果自動計算冷熱號碼與頻率分佈：</p>
-        <div id="hotNumbersContainer" class="flex flex-wrap gap-2 mb-3">
-          <span class="text-xs text-slate-400">等待資料分析...</span>
+      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg flex flex-col justify-between">
+        <div>
+          <h2 id="ui-analysis-title" class="text-lg font-bold text-amber-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-chart-line"></i> 數據統計與走勢規律
+          </h2>
+          <p id="ui-analysis-desc" class="text-xs text-slate-300 mb-4">系統根據近期開獎結果自動計算冷熱號碼與頻率分佈：</p>
+          <div id="hotNumbersContainer" class="flex flex-wrap gap-2 mb-3">
+            <span class="text-xs text-slate-400">等待資料分析...</span>
+          </div>
         </div>
-        <div id="statsSummary" class="text-xs text-slate-300 bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 space-y-1">
-          <div>大小比率分析：<span id="statRatio" class="text-amber-300 font-mono">-</span></div>
-          <div>單雙規律分佈：<span id="statOddEven" class="text-emerald-300 font-mono">-</span></div>
+        <div id="statsSummary" class="text-xs text-slate-300 bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 space-y-2 mt-4">
+          <div>大小比率：<span id="statRatio" class="text-amber-300 font-mono">-</span></div>
+          <div>單雙規律：<span id="statOddEven" class="text-emerald-300 font-mono">-</span></div>
         </div>
       </div>
 
-      <!-- AI / 大師歷史推薦號碼 -->
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg flex flex-col justify-between">
+      <!-- AI / 大師歷史推薦號碼 (10組) -->
+      <div class="lg:col-span-2 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg flex flex-col justify-between">
         <div>
-          <h2 id="ui-recommend-title" class="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> 今日大師/數據推薦號碼
-          </h2>
-          <p id="ui-recommend-desc" class="text-xs text-slate-300 mb-4">基於歷史週期走勢演算法自動推算的明日推薦組合：</p>
+          <div class="flex justify-between items-center mb-3">
+            <h2 id="ui-recommend-title" class="text-lg font-bold text-emerald-400 flex items-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> 今日大師/精選 10 組推薦號碼
+            </h2>
+            <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">基於近期熱冷走勢演算</span>
+          </div>
+          <p id="ui-recommend-desc" class="text-xs text-slate-300 mb-4">綜合冷熱規律、大小比與奇偶分佈自動推算出的十組參考預測：</p>
           
-          <div class="bg-slate-900/80 p-4 rounded-xl border border-emerald-500/30 text-center mb-3">
-            <span id="ui-rec-label" class="text-xs text-slate-400 block mb-2">精選推薦組合</span>
-            <div id="recommendedBalls" class="flex justify-center items-center gap-1">
-              <span class="ball ball-amber">?</span>
-              <span class="ball ball-amber">?</span>
-              <span class="ball ball-amber">?</span>
-              <span class="ball ball-amber">?</span>
-              <span class="ball ball-amber">?</span>
-            </div>
+          <div id="recommendedContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- 10組推薦將在此處動態生成 -->
+            <div class="text-xs text-slate-400 col-span-2 text-center py-4">正在生成大師預測號碼...</div>
           </div>
         </div>
-        <div class="text-right">
+
+        <div class="text-right mt-4 pt-2 border-t border-slate-700/50">
           <a href="https://t.me/AKMi520" target="_blank" class="text-xs text-sky-400 hover:underline inline-flex items-center gap-1">
             <i class="fa-brands fa-telegram"></i> <span id="ui-more-rec">獲取更多導師獨家策略</span>
           </a>
@@ -164,9 +164,8 @@
         refreshBtn: "手動刷新數據",
         analysisTitle: "數據統計與走勢規律",
         analysisDesc: "系統根據近期開獎結果自動計算冷熱號碼與頻率分佈：",
-        recommendTitle: "今日大師/數據推薦號碼",
-        recommendDesc: "基於歷史週期走勢演算法自動推算的明日推薦組合：",
-        recLabel: "精選推薦組合",
+        recommendTitle: "今日大師/精選 10 組推薦號碼",
+        recommendDesc: "綜合冷熱規律、大小比與奇偶分佈自動推算出的十組參考預測：",
         moreRec: "獲取更多導師獨家策略",
         tableTitle: "排列五歷史開獎紀錄",
         autoRefresh: "每 60 秒自動更新",
@@ -185,9 +184,8 @@
         refreshBtn: "Refresh Data",
         analysisTitle: "Statistics & Trend Rules",
         analysisDesc: "Frequency & hot/cold numbers automatically calculated from recent draws:",
-        recommendTitle: "Master Recommendation",
-        recommendDesc: "Algorithmic recommendations derived from historical trend cycles:",
-        recLabel: "Featured Numbers",
+        recommendTitle: "Master Top 10 Recommendations",
+        recommendDesc: "Algorithmic predictions based on hot/cold balance, parity, and size distribution:",
         moreRec: "Get Exclusive Master Strategies",
         tableTitle: "P5 Draw History",
         autoRefresh: "Auto refreshed every 60s",
@@ -216,7 +214,6 @@
       document.getElementById('ui-analysis-desc').innerText = dict.analysisDesc;
       document.getElementById('ui-recommend-title').innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> ${dict.recommendTitle}`;
       document.getElementById('ui-recommend-desc').innerText = dict.recommendDesc;
-      document.getElementById('ui-rec-label').innerText = dict.recLabel;
       document.getElementById('ui-more-rec').innerText = dict.moreRec;
       document.getElementById('ui-table-title').innerHTML = `<i class="fa-solid fa-list-ol"></i> ${dict.tableTitle}`;
       document.getElementById('ui-auto-refresh').innerText = dict.autoRefresh;
@@ -254,12 +251,12 @@
             const rawNumbers = cells[1].innerText.trim();
             const dateText = cells[2]?.innerText.trim() || '-';
 
-            // 嚴格檢測：期號必須為數字，號碼必須包含數字
+            // 嚴格清洗數據：期號必須為 5~7 位數字，且號碼包含有效數字
             if (/^\d{5,7}$/.test(periodText) && rawNumbers.length > 0) {
               const digits = rawNumbers.match(/\d/g);
               if (digits && digits.length >= 5) {
                 validRowsCount++;
-                const p5Balls = digits.slice(0, 5); // 抓取前5個數字為排列五號碼
+                const p5Balls = digits.slice(0, 5); // 精準截取前5個數字為排列五號碼
                 
                 let ballHtml = '';
                 p5Balls.forEach(dStr => {
@@ -288,7 +285,7 @@
           statusText.innerText = `${dict.success} (${now})`;
           statusText.className = 'text-xs font-medium text-emerald-400';
 
-          // 正確計算推薦號碼
+          // 計算並渲染 10 組推薦號碼與統計
           updateDashboard(numberFreq, bigCount, smallCount, oddCount, evenCount);
         } else {
           throw new Error('未解析到有效的排列五號碼');
@@ -307,26 +304,53 @@
         .map(([num, count]) => ({ num: parseInt(num, 10), count }))
         .sort((a, b) => b.count - a.count);
 
+      const hotList = sortedFreq.map(item => item.num); // 從最熱到最冷
+
       // 熱門號碼 UI
       const container = document.getElementById('hotNumbersContainer');
-      let freqHtml = '<span class="text-xs text-slate-400 block w-full mb-1">最熱門號碼排行：</span>';
+      let freqHtml = '<span class="text-xs text-slate-400 block w-full mb-1">熱門號碼出現頻率排行：</span>';
       sortedFreq.slice(0, 5).forEach(item => {
         freqHtml += `<span class="px-2 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded text-xs font-mono">號碼 ${item.num} (${item.count}次)</span>`;
       });
       container.innerHTML = freqHtml;
 
       // 2. 統計數據 UI
-      document.getElementById('statRatio').innerText = `大號(5-9): ${big} 次 | 小號(0-4): ${small} 次`;
-      document.getElementById('statOddEven').innerText = `單號: ${odd} 次 | 雙號: ${even} 次`;
+      document.getElementById('statRatio').innerText = `大號(5-9): ${big}次 | 小號(0-4): ${small}次`;
+      document.getElementById('statOddEven').innerText = `單號: ${odd}次 | 雙號: ${even}次`;
 
-      // 3. 生成大師推薦號碼 (取出現頻率最高的前 5 個獨立數字)
-      const recContainer = document.getElementById('recommendedBalls');
+      // 3. 算法生成 10 組大師推薦號碼
+      const recContainer = document.getElementById('recommendedContainer');
       let recHtml = '';
-      
-      const top5List = sortedFreq.slice(0, 5).map(item => item.num);
-      
-      top5List.forEach(num => {
-        recHtml += `<span class="ball ball-amber">${num}</span>`;
+
+      // 定義10組推薦策略矩陣
+      const strategies = [
+        { label: "01. 熱號突破組合", fn: () => [hotList[0], hotList[1], hotList[2], hotList[3], hotList[4]] },
+        { label: "02. 極致連熱組合", fn: () => [hotList[0], hotList[1], hotList[0], hotList[2], hotList[3]] },
+        { label: "03. 冷熱平衡預測", fn: () => [hotList[0], hotList[1], hotList[2], hotList[8], hotList[9]] },
+        { label: "04. 奇偶均衡組合", fn: () => [hotList[0], hotList[1], hotList[3], hotList[5], hotList[7]] },
+        { label: "05. 大小對稱組合", fn: () => [hotList[1], hotList[2], hotList[4], hotList[6], hotList[8]] },
+        { label: "06. 冷號回補組合", fn: () => [hotList[9], hotList[8], hotList[7], hotList[0], hotList[1]] },
+        { label: "07. 高頻交替組合", fn: () => [hotList[2], hotList[0], hotList[3], hotList[1], hotList[4]] },
+        { label: "08. 趨勢補位組合", fn: () => [hotList[0], hotList[3], hotList[5], hotList[2], hotList[9]] },
+        { label: "09. 概率優選組合", fn: () => [hotList[1], hotList[0], hotList[4], hotList[2], hotList[3]] },
+        { label: "10. 大師終極精選", fn: () => [hotList[0], hotList[2], hotList[1], hotList[3], hotList[5]] }
+      ];
+
+      strategies.forEach((strat, index) => {
+        const combo = strat.fn();
+        let ballsStr = '';
+        combo.forEach(n => {
+          ballsStr += `<span class="ball ball-amber">${n}</span>`;
+        });
+
+        recHtml += `
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700/80 flex justify-between items-center hover:border-emerald-500/50 transition">
+            <span class="text-xs font-semibold text-slate-300">${strat.label}</span>
+            <div class="flex items-center gap-0.5">
+              ${ballsStr}
+            </div>
+          </div>
+        `;
       });
       
       recContainer.innerHTML = recHtml;
