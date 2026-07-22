@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>排列五 數據分析與看板</title>
+  <title>排列五 純網頁即時數據看板</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -24,58 +24,69 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col justify-between">
 
-  <!-- 頂部標題 -->
+  <!-- 頂部欄目 -->
   <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-md">
     <div class="max-w-6xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
         <div class="p-2 bg-amber-500 rounded-lg text-slate-900 font-extrabold text-xl">P5</div>
         <div>
-          <h1 class="text-xl font-bold text-amber-400">排列五 數據分析看板</h1>
-          <p class="text-xs text-slate-400">即時數據連線與演算系統</p>
+          <h1 class="text-xl font-bold text-amber-400">排列五 純網頁即時數據看板</h1>
+          <p class="text-xs text-slate-400">免安裝任何軟體 | 直連官方 API 數據源</p>
         </div>
       </div>
-      <button onclick="loadData()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 shadow">
+      <button onclick="fetchRealData()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 shadow">
         <i class="fa-solid fa-rotate-right" id="refreshIcon"></i>
-        <span>重新同步數據</span>
+        <span>同步最新數據</span>
       </button>
     </div>
   </header>
 
-  <!-- 主內容區 -->
+  <!-- 主要內容區 -->
   <main class="max-w-6xl mx-auto p-4 w-full flex-grow space-y-6">
 
-    <!-- 狀態顯示區 -->
+    <!-- 狀態顯示區域 -->
     <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
-      <span class="text-xs text-slate-400">當前連線狀態：</span>
-      <span id="statusText" class="text-xs font-medium text-amber-400">正在準備數據...</span>
+      <span class="text-xs text-slate-400">當前同步狀態：</span>
+      <span id="statusText" class="text-xs font-medium text-amber-400">正在準備數據通道...</span>
     </div>
 
-    <!-- 預測號碼展示 -->
-    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
-      <h2 class="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> 今日推薦 5 組排列五號碼
-      </h2>
-      <div id="recommendContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div class="text-xs text-slate-400 col-span-2">數據載入中...</div>
+    <!-- 數據分析與精選 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
+        <h2 class="text-base font-bold text-amber-400 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-chart-line"></i> 熱門號碼統計
+        </h2>
+        <div id="hotNumbers" class="text-xs text-slate-300 space-y-2">
+          <div>分析中...</div>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
+        <h2 class="text-base font-bold text-emerald-400 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> 根據真實數據推算精選組合
+        </h2>
+        <div id="recommendList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="text-xs text-slate-400 col-span-2">等待真實數據載入...</div>
+        </div>
       </div>
     </div>
 
     <!-- 開獎紀錄表格 -->
     <div class="bg-slate-800 rounded-xl shadow-xl overflow-hidden border border-slate-700">
       <div class="p-4 bg-slate-800 border-b border-slate-700">
-        <h2 class="text-base font-bold text-slate-200">最新開獎紀錄</h2>
+        <h2 class="text-base font-bold text-slate-200">最新真實開獎紀錄</h2>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-slate-700/50 text-slate-300 text-xs">
               <th class="p-4">期號</th>
-              <th class="p-4">開獎號碼</th>
+              <th class="p-4">開獎號碼 (萬 千 百 十 個)</th>
               <th class="p-4">開獎日期</th>
             </tr>
           </thead>
           <tbody id="lotteryTable" class="divide-y divide-slate-700 text-sm">
-            <tr><td colspan="3" class="p-4 text-center text-slate-400">正在載入數據...</td></tr>
+            <tr><td colspan="3" class="p-4 text-center text-slate-400">正在嘗試獲取數據...</td></tr>
           </tbody>
         </table>
       </div>
@@ -83,75 +94,81 @@
 
   </main>
 
-  <!-- 頁尾 -->
   <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-400">
-    <p>© 2026 排列五數據分析系統</p>
+    <p>© 2026 排列五數據展示系統</p>
   </footer>
 
-  <!-- 腳本區域 -->
   <script>
-    // 預設備用數據（若網路請求超時會自動使用）
-    const defaultData = [
-      { period: "26015", balls: [3, 8, 5, 1, 9], date: "2026-01-15" },
-      { period: "26014", balls: [0, 7, 2, 6, 4], date: "2026-01-14" },
-      { period: "26013", balls: [9, 1, 5, 8, 3], date: "2026-01-13" },
-      { period: "26012", balls: [4, 6, 0, 2, 7], date: "2026-01-12" },
-      { period: "26011", balls: [8, 3, 9, 5, 1], date: "2026-01-11" }
-    ];
-
-    async function loadData() {
+    async function fetchRealData() {
       const statusText = document.getElementById('statusText');
       const refreshIcon = document.getElementById('refreshIcon');
 
       refreshIcon.classList.add('fa-spin');
       statusText.className = 'text-xs font-medium text-amber-400';
-      statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在獲取數據...';
+      statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在搜尋最穩定的數據通道...';
 
-      const timestamp = new Date().getTime();
-      const targetApi = `https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=350133&provinceId=0&pageSize=10&isVerify=1&pageNo=1&_=${timestamp}`;
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetApi)}`;
+      const timestamp = Date.now();
+      const targetApi = `https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=350133&provinceId=0&pageSize=15&isVerify=1&pageNo=1&_=${timestamp}`;
 
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 秒超時
+      // 設定多組備用跨域通道
+      const proxies = [
+        (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+        (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+      ];
 
-        const response = await fetch(proxyUrl, { signal: controller.signal });
-        clearTimeout(timeoutId);
+      let successData = null;
 
-        if (response.ok) {
-          const resData = await response.json();
-          if (resData && resData.value && resData.value.list) {
-            const list = resData.value.list.map(item => ({
+      // 輪流嘗試各個通道
+      for (let i = 0; i < proxies.length; i++) {
+        try {
+          statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在嘗試第 ${i + 1} 個數據通道...`;
+          
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000); // 6秒超時機制
+
+          const response = await fetch(proxies[i](targetApi), { signal: controller.signal });
+          clearTimeout(timeoutId);
+
+          if (!response.ok) continue;
+
+          const resText = await response.text();
+          const resJson = JSON.parse(resText);
+
+          if (resJson && resJson.value && resJson.value.list && resJson.value.list.length > 0) {
+            successData = resJson.value.list.map(item => ({
               period: item.lotteryDrawNum,
               balls: item.lotteryDrawResult.trim().split(/\s+/).map(n => parseInt(n, 10)),
               date: item.lotteryDrawTime
             }));
-            
-            renderUI(list);
-            statusText.className = 'text-xs font-medium text-emerald-400';
-            statusText.innerHTML = `<i class="fa-solid fa-check mr-1"></i> 已成功載入官方最新數據！(${new Date().toLocaleTimeString()})`;
-            refreshIcon.classList.remove('fa-spin');
-            return;
+            break; // 成功即跳出迴圈
           }
+        } catch (e) {
+          console.warn(`通道 ${i + 1} 連線超時或失敗，自動切換下一個...`);
         }
-      } catch (e) {
-        console.warn('API請求超時或被攔截，切換至備用數據');
       }
 
-      // 如果 API 連線失敗，顯示備用數據
-      renderUI(defaultData);
-      statusText.className = 'text-xs font-medium text-slate-400';
-      statusText.innerHTML = `<i class="fa-solid fa-circle-info mr-1"></i> 已顯示預設示範數據（跨域連線受限）`;
+      // 數據處理與渲染
+      if (successData) {
+        renderTable(successData);
+        renderAnalytics(successData);
+        const now = new Date().toLocaleTimeString();
+        statusText.className = 'text-xs font-medium text-emerald-400';
+        statusText.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> 已成功抓取體彩官方最新 ${successData.length} 期真實數據！(${now})`;
+      } else {
+        statusText.className = 'text-xs font-medium text-rose-400';
+        statusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> 網路回應較慢，請點擊右上方「同步最新數據」再試一次。`;
+      }
+
       refreshIcon.classList.remove('fa-spin');
     }
 
-    function renderUI(dataList) {
-      // 渲染表格
+    function renderTable(dataList) {
       const tableBody = document.getElementById('lotteryTable');
-      let tableHtml = '';
+      let html = '';
       dataList.forEach(item => {
-        let ballsHtml = item.balls.map(n => `<span class="ball ball-red">${n}</span>`).join('');
-        tableHtml += `
+        const ballsHtml = item.balls.map(n => `<span class="ball ball-red">${n}</span>`).join('');
+        html += `
           <tr class="hover:bg-slate-700/30">
             <td class="p-4 font-mono font-bold text-amber-300">${item.period}</td>
             <td class="p-4">${ballsHtml}</td>
@@ -159,17 +176,47 @@
           </tr>
         `;
       });
-      tableBody.innerHTML = tableHtml;
+      tableBody.innerHTML = html;
+    }
 
-      // 渲染預測號碼
-      const recContainer = document.getElementById('recommendContainer');
+    function renderAnalytics(dataList) {
+      // 統計號碼出現頻率
+      const freq = {};
+      dataList.forEach(item => {
+        item.balls.forEach(num => {
+          freq[num] = (freq[num] || 0) + 1;
+        });
+      });
+
+      const sortedFreq = Object.entries(freq)
+        .map(([num, count]) => ({ num: parseInt(num), count }))
+        .sort((a, b) => b.count - a.count);
+
+      // 顯示熱門號碼
+      const hotContainer = document.getElementById('hotNumbers');
+      let hotHtml = '<div class="flex flex-wrap gap-1.5">';
+      sortedFreq.slice(0, 5).forEach(item => {
+        hotHtml += `<span class="px-2 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded font-mono">號碼 ${item.num} (${item.count}次)</span>`;
+      });
+      hotHtml += '</div>';
+      hotContainer.innerHTML = hotHtml;
+
+      // 產生精選組合
+      const topNums = sortedFreq.map(i => i.num);
+      const recContainer = document.getElementById('recommendList');
       let recHtml = '';
+
       for (let i = 1; i <= 6; i++) {
-        // 隨機生成示範組合
-        let randomCombo = Array.from({length: 5}, () => Math.floor(Math.random() * 10));
-        let ballsStr = randomCombo.map(n => `<span class="ball ball-amber">${n}</span>`).join('');
+        const combo = [
+          topNums[(i - 1) % topNums.length],
+          topNums[i % topNums.length],
+          topNums[(i + 1) % topNums.length],
+          topNums[(i + 2) % topNums.length],
+          topNums[(i + 3) % topNums.length]
+        ];
+        const ballsStr = combo.map(n => `<span class="ball ball-amber">${n}</span>`).join('');
         recHtml += `
-          <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 flex justify-between items-center">
+          <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 flex justify-between items-center">
             <span class="text-xs text-slate-300 font-bold">精選組合 ${i}</span>
             <div>${ballsStr}</div>
           </div>
@@ -178,8 +225,8 @@
       recContainer.innerHTML = recHtml;
     }
 
-    // 網頁載入後執行一次
-    window.addEventListener('DOMContentLoaded', loadData);
+    // 網頁開啓時自動執行
+    window.addEventListener('DOMContentLoaded', fetchRealData);
   </script>
 </body>
 </html>
