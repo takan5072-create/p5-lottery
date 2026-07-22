@@ -152,11 +152,9 @@
   </footer>
 
   <script>
-    // 數據源與公共 CORS 代理設置
     const TARGET_URL = 'https://www.js-lottery.com/wfzq/p3p5/p5data';
     const PROXY_URL = `https://corsproxy.io/?${encodeURIComponent(TARGET_URL)}`;
 
-    // 多國語言字典
     const i18n = {
       zh: {
         title: "排列五 數據分析與實時看板",
@@ -199,20 +197,7 @@
         loading: "Fetching latest data...",
         success: "Updated successfully",
         fail: "Failed to load, click refresh"
-      },
-      es: { title: "Análisis y Panel de Lotería P5", subtitle: "Fuente: JS Lottery", tgBtn: "Telegram Soporte", statusLabel: "Estado: ", refreshBtn: "Actualizar", analysisTitle: "Estadísticas y Tendencias", analysisDesc: "Análisis de frecuencia:", recommendTitle: "Recomendación del Maestro", recommendDesc: "Predicciones basadas en algoritmos:", recLabel: "Números Seleccionados", moreRec: "Más Estrategias en Telegram", tableTitle: "Historial de Sorteos", autoRefresh: "Actualización auto cada 60s", thPeriod: "Sorteo N°", thNumbers: "Números Ganadores", thDate: "Fecha", loading: "Cargando...", success: "Actualizado", fail: "Error al cargar" },
-      tr: { title: "P5 Piyango Veri Analizi ve Paneli", subtitle: "Kaynak: JS Lottery", tgBtn: "Telegram Destek", statusLabel: "Durum: ", refreshBtn: "Yenile", analysisTitle: "İstatistikler ve Trendler", analysisDesc: "Sıcak/soğuk numara analizi:", recommendTitle: "Usta Önerisi", recommendDesc: "Algoritma destekli tahminler:", recLabel: "Öne Çıkan Sayılar", moreRec: "Detaylı Stratejiler Telegram'da", tableTitle: "Çekiliş Geçmişi", autoRefresh: "Her 60s otomatik yenilenir", thPeriod: "Çekiliş No", thNumbers: "Kazanan Sayılar", thDate: "Tarih", loading: "Yükleniyor...", success: "Güncellendi", fail: "Yükleme başarısız" },
-      it: { title: "Analisi Dati e Dashboard Lotto P5", subtitle: "Fonte: JS Lottery", tgBtn: "Supporto Telegram", statusLabel: "Stato: ", refreshBtn: "Aggiorna", analysisTitle: "Statistiche e Tendenze", analysisDesc: "Numeri frequenti e ritardi:", recommendTitle: "Consigli dell'Esperto", recommendDesc: "Previsioni basate su algoritmi:", recLabel: "Numeri Consigliati", moreRec: "Strategie su Telegram", tableTitle: "Cronologia Estrazioni", autoRefresh: "Aggiornato ogni 60s", thPeriod: "Estrazione N°", thNumbers: "Numeri Estratti", thDate: "Data", loading: "Caricamento...", success: "Aggiornato", fail: "Errore nel caricamento" },
-      hi: { title: "P5 लॉटरी डेटा विश्लेषण और डैशबोर्ड", subtitle: "स्रोत: JS Lottery", tgBtn: "टेलीग्राम सहायता", statusLabel: "स्थिति: ", refreshBtn: "रिफ्रेश करें", analysisTitle: "आंकड़े और रुझान", analysisDesc: "आवृत्ति और रुझान विश्लेषण:", recommendTitle: "विशेषज्ञ की सिफारिश", recommendDesc: "अल्गोरिदम आधारित भविष्यवाणियां:", recLabel: "चुने गए नंबर", moreRec: "टेलीग्राम पर अधिक रणनीतियां", tableTitle: "ड्रा इतिहास", autoRefresh: "हर 60s में ऑटो अपडेट", thPeriod: "ड्रा संख्या", thNumbers: "जीतने वाले नंबर", thDate: "तिथि", loading: "लोड हो रहा है...", success: "अपडेट सफल", fail: "लोड विफल" },
-      ko: { title: "P5 로또 데이터 분석 및 실시간 대시보드", subtitle: "출처: JS Lottery", tgBtn: "텔레그램 문의", statusLabel: "상태: ", refreshBtn: "새로고침", analysisTitle: "통계 및 패턴 분석", analysisDesc: "최근 당첨 번호 빈도 및 분석:", recommendTitle: "마스터 추천 번호", recommendDesc: "히스토리 패턴 분석 추천:", recLabel: "추천 번호 조합", moreRec: "텔레그램에서 더 보기", tableTitle: "당첨 히스토리", autoRefresh: "60초마다 자동 갱신", thPeriod: "회차", thNumbers: "당첨 번호", thDate: "추첨일", loading: "데이터 로딩 중...", success: "업데이트 완료", fail: "로딩 실패" },
-      ja: { title: "P5 宝くじデータ分析＆リアルタイムボード", subtitle: "情報元：JS Lottery", tgBtn: "Telegram カスタマーサポート", statusLabel: "ステータス: ", refreshBtn: "更新", analysisTitle: "統計＆トレンド分析", analysisDesc: "直近の出目頻度と冷熱分析：", recommendTitle: "マスター予想ナンバー", recommendDesc: "過去データアルゴリズム推測：", recLabel: "厳選おすすめ番号", moreRec: "Telegramで限定戦略を入手", tableTitle: "抽せん履歴", autoRefresh: "60秒毎に自動更新", thPeriod: "回号", thNumbers: "当せん番号", thDate: "抽せん日", loading: "データ取得中...", success: "更新成功", fail: "取得失敗" },
-      vi: { title: "Phân Tích Dữ Liệu & Bảng Điều Khiển Xổ Số P5", subtitle: "Nguồn: JS Lottery", tgBtn: "Hỗ Trợ Telegram", statusLabel: "Trạng thái: ", refreshBtn: "Làm mới", analysisTitle: "Thống Kê & Xu Hướng", analysisDesc: "Phân tích tần suất số:", recommendTitle: "Gợi Ý Từ Chuyên Gia", recommendDesc: "Dự đoán dựa trên thuật toán:", recLabel: "Bộ Số Gợi Ý", moreRec: "Xem Thêm Chiến Lược Trên Telegram", tableTitle: "Lịch Sử Mở Thưởng", autoRefresh: "Tự động cập nhật mỗi 60s", thPeriod: "Kỳ", thNumbers: "Dãy Số Trúng", thDate: "Ngày", loading: "Đang tải dữ liệu...", success: "Cập nhật thành công", fail: "Lỗi tải dữ liệu" },
-      th: { title: "วิเคราะห์ข้อมูลและแดชบอร์ดหวย P5", subtitle: "แหล่งข้อมูล: JS Lottery", tgBtn: "ฝ่ายบริการ Telegram", statusLabel: "สถานะ: ", refreshBtn: "รีเฟรช", analysisTitle: "สถิติและแนวโน้ม", analysisDesc: "วิเคราะห์ความถี่ของตัวเลข:", recommendTitle: "ตัวเลขแนะนำจากผู้เชี่ยวชาญ", recommendDesc: "การทำนายด้วยอัลกอริทึม:", recLabel: "ชุดตัวเลขแนะนำ", moreRec: "รับกลยุทธ์เพิ่มเติมที่ Telegram", tableTitle: "ประวัติการออกรางวัล", autoRefresh: "อัปเดตอัตโนมัติทุก 60 วินาที", thPeriod: "งวดที่", thNumbers: "ผลการออกรางวัล", thDate: "วันที่", loading: "กำลังโหลดข้อมูล...", success: "อัปเดตสำเร็จ", fail: "โหลดไม่สำเร็จ" },
-      fr: { title: "Analyse des Données et Tableau de Bord P5", subtitle: "Source: JS Lottery", tgBtn: "Support Telegram", statusLabel: "Statut: ", refreshBtn: "Actualiser", analysisTitle: "Statistiques et Tendances", analysisDesc: "Analyse de fréquence des numéros:", recommendTitle: "Recommandation de l'Expert", recommendDesc: "Prédictions basées sur un algorithme:", recLabel: "Numéros Sélectionnés", moreRec: "Plus de Stratégies sur Telegram", tableTitle: "Historique des Tirages", autoRefresh: "Auto-actualisé toutes les 60s", thPeriod: "N° Tirage", thNumbers: "Numéros Gagnants", thDate: "Date", loading: "Chargement...", success: "Mis à jour", fail: "Échec du chargement" },
-      de: { title: "P5 Lotterie Datenanalyse & Dashboard", subtitle: "Quelle: JS Lottery", tgBtn: "Telegram Support", statusLabel: "Status: ", refreshBtn: "Aktualisieren", analysisTitle: "Statistiken & Trends", analysisDesc: "Häufigkeits- & Trendanalyse:", recommendTitle: "Experten-Empfehlung", recommendDesc: "Algorithmus-basierte Vorhersagen:", recLabel: "Ausgewählte Zahlen", moreRec: "Weitere Strategien auf Telegram", tableTitle: "Ziehungshistorie", autoRefresh: "Automatisch alle 60s aktualisiert", thPeriod: "Ziehung Nr.", thNumbers: "Gewinnzahlen", thDate: "Datum", loading: "Daten werden geladen...", success: "Erfolgreich aktualisiert", fail: "Laden fehlgeschlagen" },
-      ru: { title: "Анализ Данных и Панель Лотереи P5", subtitle: "Источник: JS Lottery", tgBtn: "Поддержка в Telegram", statusLabel: "Статус: ", refreshBtn: "Обновить", analysisTitle: "Статистика и Тренды", analysisDesc: "Анализ частоты выпадения чисел:", recommendTitle: "Рекомендации Эксперта", recommendDesc: "Прогноз на основе алгоритма:", recLabel: "Рекомендуемые Номера", moreRec: "Больше Стратегий в Telegram", tableTitle: "История Тиражей", autoRefresh: "Автообновление каждые 60с", thPeriod: "Тираж №", thNumbers: "Выигрышные Номера", thDate: "Дата", loading: "Загрузка данных...", success: "Успешно обновлено", fail: "Ошибка загрузки" },
-      pt: { title: "Análise de Dados e Painel da Loteria P5", subtitle: "Fonte: JS Lottery", tgBtn: "Suporte Telegram", statusLabel: "Status: ", refreshBtn: "Atualizar", analysisTitle: "Estatísticas e Tendências", analysisDesc: "Análise de frequência de números:", recommendTitle: "Recomendação do Mestre", recommendDesc: "Previsões baseadas em algoritmo:", recLabel: "Números Selecionados", moreRec: "Mais Estratégias no Telegram", tableTitle: "Histórico de Sorteios", autoRefresh: "Atualizado a cada 60s", thPeriod: "Concurso N°", thNumbers: "Números Sorteados", thDate: "Data", loading: "Carregando...", success: "Atualizado com sucesso", fail: "Falha ao carregar" },
-      ar: { title: "تحليل بيانات لوترية P5 واللوحة التفاعلية", subtitle: "المصدر: JS Lottery", tgBtn: "دعم التليجرام", statusLabel: "الحالة: ", refreshBtn: "تحديث", analysisTitle: "الإحصائيات والاتجاهات", analysisDesc: "تحليل تكرار الأرقام والأرقام الساخنة/الباردة:", recommendTitle: "توصيات الخبراء", recommendDesc: "توقعات خوارزمية قائمة على السجل التاريخي:", recLabel: "الأرقام المختارة", moreRec: "احصل على المزيد عبر التليجرام", tableTitle: "سجل السحوبات", autoRefresh: "تحديث تلقائي كل 60 ثانية", thPeriod: "رقم السحب", thNumbers: "الأرقام الفائزة", thDate: "التاريخ", loading: "جاري التحميل...", success: "تم التحديث بنجاح", fail: "فشل التحميل" }
+      }
     };
 
     let currentLang = 'zh';
@@ -220,7 +205,6 @@
     function changeLanguage(lang) {
       currentLang = lang;
       const dict = i18n[lang] || i18n['zh'];
-      
       document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
       document.getElementById('ui-title').innerText = dict.title;
@@ -251,60 +235,46 @@
 
       try {
         const response = await fetch(PROXY_URL);
-        if (!response.ok) throw new Error('Network error');
+        if (!response.ok) throw new Error('Network response failure');
         
         const htmlText = await response.text();
-
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
         const rows = doc.querySelectorAll('tr');
         
         let htmlBuffer = '';
-        let count = 0;
-        
-        // 嚴謹的數字頻率初始化 (0-9)
-        let numberFrequency = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
-        let totalBalls = 0;
-        let oddCount = 0;
-        let evenCount = 0;
-        let bigCount = 0;
-        let smallCount = 0;
+        let validRowsCount = 0;
+        let numberFreq = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
+        let bigCount = 0, smallCount = 0, oddCount = 0, evenCount = 0;
 
         rows.forEach(row => {
           const cells = row.querySelectorAll('td');
           if (cells.length >= 3) {
-            const period = cells[0].innerText.trim();
-            const numbersStr = cells[1].innerText.trim();
-            const date = cells[2]?.innerText.trim() || '-';
+            const periodText = cells[0].innerText.replace(/\s+/g, '');
+            const rawNumbers = cells[1].innerText.trim();
+            const dateText = cells[2]?.innerText.trim() || '-';
 
-            // 防錯過濾，確保該列包含真正的期號與號碼
-            if (period && numbersStr && /^\d+$/.test(period.replace(/\s+/g, ''))) {
-              count++;
-              
-              // 拆分號碼
-              const rawNums = numbersStr.split(/[\s,-]+/);
-              let ballHtml = '';
-              
-              rawNums.forEach(n => {
-                const cleanedN = n.trim();
-                if (cleanedN !== '' && !isNaN(cleanedN)) {
-                  const numInt = parseInt(cleanedN, 10);
-                  if (numInt >= 0 && numInt <= 9) {
-                    numberFrequency[numInt]++;
-                    totalBalls++;
-                    if (numInt % 2 === 0) evenCount++; else oddCount++;
-                    if (numInt >= 5) bigCount++; else smallCount++;
-                    ballHtml += `<span class="ball ball-red">${numInt}</span>`;
-                  }
-                }
-              });
+            // 嚴格檢測：期號必須為數字，號碼必須包含數字
+            if (/^\d{5,7}$/.test(periodText) && rawNumbers.length > 0) {
+              const digits = rawNumbers.match(/\d/g);
+              if (digits && digits.length >= 5) {
+                validRowsCount++;
+                const p5Balls = digits.slice(0, 5); // 抓取前5個數字為排列五號碼
+                
+                let ballHtml = '';
+                p5Balls.forEach(dStr => {
+                  const num = parseInt(dStr, 10);
+                  numberFreq[num]++;
+                  if (num >= 5) bigCount++; else smallCount++;
+                  if (num % 2 === 0) evenCount++; else oddCount++;
+                  ballHtml += `<span class="ball ball-red">${num}</span>`;
+                });
 
-              if (ballHtml !== '') {
                 htmlBuffer += `
                   <tr class="hover:bg-slate-700/30 transition">
-                    <td class="p-4 font-mono font-bold text-amber-300">${period}</td>
+                    <td class="p-4 font-mono font-bold text-amber-300">${periodText}</td>
                     <td class="p-4">${ballHtml}</td>
-                    <td class="p-4 text-slate-400">${date}</td>
+                    <td class="p-4 text-slate-400">${dateText}</td>
                   </tr>
                 `;
               }
@@ -312,65 +282,56 @@
           }
         });
 
-        if (count > 0 && totalBalls > 0) {
+        if (validRowsCount > 0) {
           tableBody.innerHTML = htmlBuffer;
           const now = new Date().toLocaleTimeString();
           statusText.innerText = `${dict.success} (${now})`;
           statusText.className = 'text-xs font-medium text-emerald-400';
 
-          // 計算並正確渲染冷熱號碼與 5 位大師推薦組合
-          renderAnalysis(numberFrequency, bigCount, smallCount, oddCount, evenCount);
+          // 正確計算推薦號碼
+          updateDashboard(numberFreq, bigCount, smallCount, oddCount, evenCount);
         } else {
-          tableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-amber-400">暫無開獎數據</td></tr>`;
-          statusText.innerText = dict.fail;
-          statusText.className = 'text-xs font-medium text-red-400';
+          throw new Error('未解析到有效的排列五號碼');
         }
       } catch (err) {
-        console.error(err);
-        tableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-red-400">${dict.fail} (${err.message})</td></tr>`;
+        console.error("Fetch error:", err);
+        tableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-amber-400">數據獲取異常，請重新刷新</td></tr>`;
         statusText.innerText = dict.fail;
         statusText.className = 'text-xs font-medium text-red-400';
       }
     }
 
-    // 渲染冷熱統計與號碼推薦
-    function renderAnalysis(freq, big, small, odd, even) {
-      const container = document.getElementById('hotNumbersContainer');
-      
-      // 將物件轉為陣列並嚴格按出現頻率降序（從大到小）排序
-      const sorted = Object.entries(freq)
-        .map(([num, count]) => [parseInt(num, 10), count])
-        .sort((a, b) => b[1] - a[1]);
+    function updateDashboard(freq, big, small, odd, even) {
+      // 1. 冷熱號碼排序
+      const sortedFreq = Object.entries(freq)
+        .map(([num, count]) => ({ num: parseInt(num, 10), count }))
+        .sort((a, b) => b.count - a.count);
 
-      // 1. 渲染熱號清單 (前 5 熱門號碼)
+      // 熱門號碼 UI
+      const container = document.getElementById('hotNumbersContainer');
       let freqHtml = '<span class="text-xs text-slate-400 block w-full mb-1">最熱門號碼排行：</span>';
-      sorted.slice(0, 5).forEach(([num, count]) => {
-        freqHtml += `<span class="px-2 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded text-xs font-mono">號碼 ${num} (${count}次)</span>`;
+      sortedFreq.slice(0, 5).forEach(item => {
+        freqHtml += `<span class="px-2 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded text-xs font-mono">號碼 ${item.num} (${item.count}次)</span>`;
       });
       container.innerHTML = freqHtml;
 
-      // 2. 渲染大小單雙規律統計
+      // 2. 統計數據 UI
       document.getElementById('statRatio').innerText = `大號(5-9): ${big} 次 | 小號(0-4): ${small} 次`;
       document.getElementById('statOddEven').innerText = `單號: ${odd} 次 | 雙號: ${even} 次`;
 
-      // 3. 生成精準 5 位大師推薦組合 (取統計最高頻率的前 5 個熱門號碼)
+      // 3. 生成大師推薦號碼 (取出現頻率最高的前 5 個獨立數字)
       const recContainer = document.getElementById('recommendedBalls');
       let recHtml = '';
       
-      // 取前 5 名熱門號碼（若熱門不足則補齊）
-      const top5 = sorted.slice(0, 5).map(item => item[0]);
-      while (top5.length < 5) {
-        top5.push(Math.floor(Math.random() * 10));
-      }
-
-      top5.forEach(n => {
-        recHtml += `<span class="ball ball-amber">${n}</span>`;
+      const top5List = sortedFreq.slice(0, 5).map(item => item.num);
+      
+      top5List.forEach(num => {
+        recHtml += `<span class="ball ball-amber">${num}</span>`;
       });
       
       recContainer.innerHTML = recHtml;
     }
 
-    // 初始載入與定時刷新
     fetchData();
     setInterval(fetchData, 60000);
   </script>
