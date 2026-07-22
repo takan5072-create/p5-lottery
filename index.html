@@ -221,7 +221,6 @@
       currentLang = lang;
       const dict = i18n[lang] || i18n['zh'];
       
-      // 切換文字方向 (針對阿拉伯語 RTL)
       document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
       document.getElementById('ui-title').innerText = dict.title;
@@ -256,14 +255,15 @@
         
         const htmlText = await response.text();
 
-        // 解析 HTML 數據
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
         const rows = doc.querySelectorAll('tr');
         
         let htmlBuffer = '';
         let count = 0;
-        let numberFrequency = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+        
+        // 嚴謹的數字頻率初始化 (0-9)
+        let numberFrequency = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
         let totalBalls = 0;
         let oddCount = 0;
         let evenCount = 0;
@@ -277,43 +277,49 @@
             const numbersStr = cells[1].innerText.trim();
             const date = cells[2]?.innerText.trim() || '-';
 
-            if (period && numbersStr) {
+            // 防錯過濾，確保該列包含真正的期號與號碼
+            if (period && numbersStr && /^\d+$/.test(period.replace(/\s+/g, ''))) {
               count++;
               
-              // 拆分號碼渲染成漂亮的圓球
-              const nums = numbersStr.split(/[\s,-]+/);
+              // 拆分號碼
+              const rawNums = numbersStr.split(/[\s,-]+/);
               let ballHtml = '';
               
-              nums.forEach(n => {
-                const numInt = parseInt(n, 10);
-                if (!isNaN(numInt)) {
-                  numberFrequency[numInt] = (numberFrequency[numInt] || 0) + 1;
-                  totalBalls++;
-                  if (numInt % 2 === 0) evenCount++; else oddCount++;
-                  if (numInt >= 5) bigCount++; else smallCount++;
+              rawNums.forEach(n => {
+                const cleanedN = n.trim();
+                if (cleanedN !== '' && !isNaN(cleanedN)) {
+                  const numInt = parseInt(cleanedN, 10);
+                  if (numInt >= 0 && numInt <= 9) {
+                    numberFrequency[numInt]++;
+                    totalBalls++;
+                    if (numInt % 2 === 0) evenCount++; else oddCount++;
+                    if (numInt >= 5) bigCount++; else smallCount++;
+                    ballHtml += `<span class="ball ball-red">${numInt}</span>`;
+                  }
                 }
-                ballHtml += `<span class="ball ball-red">${n}</span>`;
               });
 
-              htmlBuffer += `
-                <tr class="hover:bg-slate-700/30 transition">
-                  <td class="p-4 font-mono font-bold text-amber-300">${period}</td>
-                  <td class="p-4">${ballHtml}</td>
-                  <td class="p-4 text-slate-400">${date}</td>
-                </tr>
-              `;
+              if (ballHtml !== '') {
+                htmlBuffer += `
+                  <tr class="hover:bg-slate-700/30 transition">
+                    <td class="p-4 font-mono font-bold text-amber-300">${period}</td>
+                    <td class="p-4">${ballHtml}</td>
+                    <td class="p-4 text-slate-400">${date}</td>
+                  </tr>
+                `;
+              }
             }
           }
         });
 
-        if (count > 0) {
+        if (count > 0 && totalBalls > 0) {
           tableBody.innerHTML = htmlBuffer;
           const now = new Date().toLocaleTimeString();
           statusText.innerText = `${dict.success} (${now})`;
           statusText.className = 'text-xs font-medium text-emerald-400';
 
-          // 計算熱門號碼統計
-          renderAnalysis(numberFrequency, totalBalls, bigCount, smallCount, oddCount, evenCount);
+          // 計算並正確渲染冷熱號碼與 5 位大師推薦組合
+          renderAnalysis(numberFrequency, bigCount, smallCount, oddCount, evenCount);
         } else {
           tableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-amber-400">暫無開獎數據</td></tr>`;
           statusText.innerText = dict.fail;
@@ -328,28 +334,39 @@
     }
 
     // 渲染冷熱統計與號碼推薦
-    function renderAnalysis(freq, total, big, small, odd, even) {
+    function renderAnalysis(freq, big, small, odd, even) {
       const container = document.getElementById('hotNumbersContainer');
-      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+      
+      // 將物件轉為陣列並嚴格按出現頻率降序（從大到小）排序
+      const sorted = Object.entries(freq)
+        .map(([num, count]) => [parseInt(num, 10), count])
+        .sort((a, b) => b[1] - a[1]);
 
+      // 1. 渲染熱號清單 (前 5 熱門號碼)
       let freqHtml = '<span class="text-xs text-slate-400 block w-full mb-1">最熱門號碼排行：</span>';
       sorted.slice(0, 5).forEach(([num, count]) => {
         freqHtml += `<span class="px-2 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded text-xs font-mono">號碼 ${num} (${count}次)</span>`;
       });
       container.innerHTML = freqHtml;
 
-      // 統計比率
+      // 2. 渲染大小單雙規律統計
       document.getElementById('statRatio').innerText = `大號(5-9): ${big} 次 | 小號(0-4): ${small} 次`;
       document.getElementById('statOddEven').innerText = `單號: ${odd} 次 | 雙號: ${even} 次`;
 
-      // 基於統計頻率的推薦組合生成
-      const recommended = sorted.slice(0, 5).map(item => item[0]);
+      // 3. 生成精準 5 位大師推薦組合 (取統計最高頻率的前 5 個熱門號碼)
       const recContainer = document.getElementById('recommendedBalls');
-      
       let recHtml = '';
-      recommended.forEach(n => {
+      
+      // 取前 5 名熱門號碼（若熱門不足則補齊）
+      const top5 = sorted.slice(0, 5).map(item => item[0]);
+      while (top5.length < 5) {
+        top5.push(Math.floor(Math.random() * 10));
+      }
+
+      top5.forEach(n => {
         recHtml += `<span class="ball ball-amber">${n}</span>`;
       });
+      
       recContainer.innerHTML = recHtml;
     }
 
