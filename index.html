@@ -21,7 +21,7 @@
         <div class="p-2 bg-amber-500 rounded-lg text-slate-900 font-extrabold text-xl">P5</div>
         <div>
           <h1 id="ui-title" class="text-xl font-bold text-amber-400">排列五 官方數據與自動分析看板</h1>
-          <p id="ui-subtitle" class="text-xs text-slate-400">數據來源：官方 API (自動即時同步，每日 21:30 定時刷新)</p>
+          <p id="ui-subtitle" class="text-xs text-slate-400">數據來源：官方體彩 API (每日 21:30 定時自動更新)</p>
         </div>
       </div>
 
@@ -65,7 +65,7 @@
       <div>
         <span id="ui-status-label" class="text-xs font-semibold text-slate-400">當前狀態：</span>
         <span id="statusText" class="text-xs font-medium text-amber-400">
-          <i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在發起連線，自動獲取官方最新開獎數據...
+          <i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在連線官方數據庫，擷取最新排列五開獎數據...
         </span>
       </div>
       <button onclick="fetchAutoData()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 shadow">
@@ -151,13 +151,12 @@
   </footer>
 
   <script>
-    // 資料庫變數（由 API 動態寫入）
     let activeDatabase = [];
 
     const i18n = {
       zh: {
         title: "排列五 官方數據與自動分析看板",
-        subtitle: "數據來源：官方 API (自動即時同步，每日 21:30 定時刷新)",
+        subtitle: "數據來源：官方體彩 API (每日 21:30 定時自動更新)",
         tgBtn: "聯繫 Telegram 客服",
         statusLabel: "當前狀態：",
         refreshBtn: "立即強制重新擷取與分析",
@@ -174,14 +173,14 @@
       },
       en: {
         title: "P5 Lottery Official Analytics Dashboard",
-        subtitle: "Source: Official API (Auto Sync, Scheduled Daily at 21:30)",
+        subtitle: "Source: Official API (Auto Sync Daily at 21:30)",
         tgBtn: "Contact Telegram Support",
         statusLabel: "Status: ",
         refreshBtn: "Force Re-fetch & Analyze",
         analysisTitle: "Statistics & Trend Rules",
-        analysisDesc: "Frequency & hot/cold numbers automatically calculated from latest live data:",
+        analysisDesc: "Frequency & hot/cold numbers calculated from official draw data:",
         recommendTitle: "Master Top 10 Recommendations",
-        recommendDesc: "Algorithmic predictions based on live hot/cold balance, parity, and size distribution:",
+        recommendDesc: "Algorithmic predictions based on hot/cold balance, parity, and size distribution:",
         moreRec: "Get Exclusive Master Strategies",
         tableTitle: "P5 Draw History",
         autoRefresh: "Scheduled daily at 21:30",
@@ -215,28 +214,28 @@
       document.getElementById('th-date').innerText = dict.thDate;
     }
 
-    // 連線 API 抓取官方排列五真實數據
+    // 連線官方 API 抓取「排列五 (350133)」真實開獎數據
     async function fetchAutoData() {
       const statusText = document.getElementById('statusText');
       const refreshIcon = document.getElementById('refreshIcon');
       
       refreshIcon.classList.add('fa-spin');
       statusText.className = 'text-xs font-medium text-amber-400';
-      statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在連線官方數據庫同步最新排列五數據...`;
+      statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在連線官方數據庫，擷取最新排列五開獎數據...`;
 
-      // 官方歷史數據 API endpoint (經代理服務解決瀏覽器跨域限制)
-      const targetApi = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=350132&provinceId=0&pageSize=10&isVerify=1&pageNo=1';
+      // 官方體彩排列五代號：350133
+      const targetApi = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=350133&provinceId=0&pageSize=10&isVerify=1&pageNo=1';
       const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(targetApi);
 
       try {
         const response = await fetch(proxyUrl, { cache: 'no-cache' });
-        if (!response.ok) throw new Error('網路請求回應異常');
+        if (!response.ok) throw new Error('網路連線回應異常');
         
         const wrapperData = await response.json();
         const realData = JSON.parse(wrapperData.contents);
 
         if (realData && realData.value && realData.value.list && realData.value.list.length > 0) {
-          // 解析官方數據格式
+          // 解析正確的排列五 5 位數號碼
           activeDatabase = realData.value.list.map(item => {
             const ballsArray = item.lotteryDrawResult.split(' ').map(n => parseInt(n, 10));
             return {
@@ -248,24 +247,24 @@
 
           const now = new Date().toLocaleTimeString();
           statusText.className = 'text-xs font-medium text-emerald-400';
-          statusText.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> 已成功同步官方最新 ${activeDatabase.length} 期真實數據！(${now})`;
+          statusText.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> 已成功同步官方最新 ${activeDatabase.length} 期【排列五】真實數據！(${now})`;
           
           renderTable(activeDatabase);
           processAnalytics(activeDatabase);
         } else {
-          throw new Error('資料結構解析異常');
+          throw new Error('數據解析失敗');
         }
       } catch (err) {
-        console.error('抓取失敗詳情：', err);
+        console.error('抓取錯誤：', err);
         const now = new Date().toLocaleTimeString();
         statusText.className = 'text-xs font-medium text-rose-400';
-        statusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> 連線官方 API 失敗，請確認網路連線或稍後點擊重新擷取。(${now})`;
+        statusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> 連線官方 API 失敗，請確認網路或稍後重試。(${now})`;
       } finally {
         refreshIcon.classList.remove('fa-spin');
       }
     }
 
-    // 設定每日 21:30 自動刷新機制
+    // 定時定點排程：每天晚上 21:30 自動同步
     function scheduleNightlyUpdate() {
       const now = new Date();
       const target = new Date();
@@ -284,7 +283,7 @@
       }, msUntilTarget);
     }
 
-    // 渲染開獎歷史表格
+    // 繪製歷史開獎表格
     function renderTable(dataList) {
       const tableBody = document.getElementById('lotteryTable');
       if (!dataList || dataList.length === 0) {
@@ -312,7 +311,7 @@
       tableBody.innerHTML = htmlBuffer;
     }
 
-    // 自動計算冷熱號碼與 10 組推薦號碼
+    // 根據排列五真實開獎數據，計算規律與推算 10 組預測
     function processAnalytics(dataList) {
       if (!dataList || dataList.length === 0) return;
 
@@ -341,11 +340,11 @@
       });
       container.innerHTML = freqHtml;
 
-      // 2. 統計比例數據
+      // 2. 大小單雙數據統計
       document.getElementById('statRatio').innerText = `大號(5-9): ${bigCount}次 | 小號(0-4): ${smallCount}次`;
       document.getElementById('statOddEven').innerText = `單號: ${oddCount}次 | 雙號: ${evenCount}次`;
 
-      // 3. 根據真實走勢生成 10 組推薦組合
+      // 3. 生成 10 組排列五精選號碼
       const recContainer = document.getElementById('recommendedContainer');
       let recHtml = '';
 
@@ -382,7 +381,7 @@
       recContainer.innerHTML = recHtml;
     }
 
-    // 開頁時即刻發起數據同步，並啟動 21:30 排程
+    // 開頁自動自動抓取數據並開啟 21:30 定時同步
     window.addEventListener('DOMContentLoaded', () => {
       fetchAutoData();
       scheduleNightlyUpdate();
