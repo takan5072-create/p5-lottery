@@ -1,140 +1,81 @@
-```html
 <!DOCTYPE html>
-<html lang="zh-Hant" dir="ltr">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>排列五 體彩官方數據與即時分析</title>
+  <title>排列五 數據分析與看板</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .ball { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; font-size: 13px; margin: 0 1px; }
+    .ball {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 14px;
+      margin: 0 2px;
+    }
     .ball-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
     .ball-amber { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col justify-between">
 
-  <!-- 頂部導航欄 -->
-  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+  <!-- 頂部標題 -->
+  <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-md">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
         <div class="p-2 bg-amber-500 rounded-lg text-slate-900 font-extrabold text-xl">P5</div>
         <div>
-          <h1 id="ui-title" class="text-xl font-bold text-amber-400">排列五 中國體彩官方數據看板</h1>
-          <p id="ui-subtitle" class="text-xs text-slate-400">數據來源：中國體育彩票網 (每日 21:30 自動刷新)</p>
+          <h1 class="text-xl font-bold text-amber-400">排列五 數據分析看板</h1>
+          <p class="text-xs text-slate-400">即時數據連線與演算系統</p>
         </div>
       </div>
-
-      <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-        <div class="flex items-center gap-1 bg-slate-700 px-2 py-1.5 rounded-lg border border-slate-600">
-          <i class="fa-solid fa-globe text-slate-300"></i>
-          <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer">
-            <option value="zh">繁體中文</option>
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="tr">Türkçe</option>
-            <option value="it">Italiano</option>
-            <option value="hi">हिन्दी</option>
-            <option value="ko">한국어</option>
-            <option value="ja">日本語</option>
-            <option value="vi">Tiếng Việt</option>
-            <option value="th">ไทย</option>
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-            <option value="ru">Русский</option>
-            <option value="pt">Português</option>
-            <option value="ar">العربية</option>
-          </select>
-        </div>
-
-        <a href="https://t.me/AKMi520" target="_blank" class="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow">
-          <i class="fa-brands fa-telegram text-base"></i>
-          <span id="ui-tg-btn">聯繫 Telegram 客服</span>
-        </a>
-      </div>
+      <button onclick="loadData()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 shadow">
+        <i class="fa-solid fa-rotate-right" id="refreshIcon"></i>
+        <span>重新同步數據</span>
+      </button>
     </div>
   </header>
 
-  <!-- 主要內容區 -->
-  <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+  <!-- 主內容區 -->
+  <main class="max-w-6xl mx-auto p-4 w-full flex-grow space-y-6">
 
-    <!-- 狀態控制欄 -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-800/80 p-4 rounded-xl border border-slate-700 gap-4">
-      <div>
-        <span id="ui-status-label" class="text-xs font-semibold text-slate-400">當前狀態：</span>
-        <span id="statusText" class="text-xs font-medium text-amber-400">
-          <i class="fa-solid fa-spinner fa-spin mr-1"></i> 正連線中國體彩網擷取排列五最新數據...
-        </span>
-      </div>
-      <button onclick="fetchAutoData()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 shadow">
-        <i class="fa-solid fa-rotate-right" id="refreshIcon"></i>
-        <span id="ui-refresh-btn">重新同步數據</span>
-      </button>
+    <!-- 狀態顯示區 -->
+    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+      <span class="text-xs text-slate-400">當前連線狀態：</span>
+      <span id="statusText" class="text-xs font-medium text-amber-400">正在準備數據...</span>
     </div>
 
-    <!-- 數據分析區 -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg flex flex-col justify-between">
-        <div>
-          <h2 id="ui-analysis-title" class="text-lg font-bold text-amber-400 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-chart-line"></i> 體彩數據走勢分析
-          </h2>
-          <p id="ui-analysis-desc" class="text-xs text-slate-300 mb-4">根據體彩網最新排列五開獎演算：</p>
-          <div id="hotNumbersContainer" class="flex flex-wrap gap-2 mb-3">
-            <span class="text-xs text-slate-400">讀取中...</span>
-          </div>
-        </div>
-        <div id="statsSummary" class="text-xs text-slate-300 bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 space-y-2 mt-4">
-          <div>大小比例：<span id="statRatio" class="text-amber-300 font-mono">-</span></div>
-          <div>奇偶規律：<span id="statOddEven" class="text-emerald-300 font-mono">-</span></div>
-        </div>
+    <!-- 預測號碼展示 -->
+    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
+      <h2 class="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> 今日推薦 5 組排列五號碼
+      </h2>
+      <div id="recommendContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="text-xs text-slate-400 col-span-2">數據載入中...</div>
       </div>
-
-      <div class="lg:col-span-2 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg flex flex-col justify-between">
-        <div>
-          <div class="flex justify-between items-center mb-3">
-            <h2 id="ui-recommend-title" class="text-lg font-bold text-emerald-400 flex items-center gap-2">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> 今日大師/精選 10 組排列五預測
-            </h2>
-            <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">基於體彩官網數據演算</span>
-          </div>
-          <p id="ui-recommend-desc" class="text-xs text-slate-300 mb-4">綜合冷熱頻率、奇偶比與大小分佈推算的 10 組號碼：</p>
-          
-          <div id="recommendedContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div class="text-xs text-slate-400 col-span-2 text-center py-4">正在推算推薦號碼...</div>
-          </div>
-        </div>
-
-        <div class="text-right mt-4 pt-2 border-t border-slate-700/50">
-          <a href="https://t.me/AKMi520" target="_blank" class="text-xs text-sky-400 hover:underline inline-flex items-center gap-1">
-            <i class="fa-brands fa-telegram"></i> <span id="ui-more-rec">獲取更多導師獨家策略</span>
-          </a>
-        </div>
-      </div>
-
     </div>
 
     <!-- 開獎紀錄表格 -->
     <div class="bg-slate-800 rounded-xl shadow-xl overflow-hidden border border-slate-700">
-      <div class="p-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
-        <h2 id="ui-table-title" class="text-base font-bold text-slate-200 flex items-center gap-2">
-          <i class="fa-solid fa-list-ol"></i> 中國體彩排列五 最新開獎紀錄
-        </h2>
-        <span class="text-xs text-slate-400" id="ui-auto-refresh">已設定每日 21:30 自動更新</span>
+      <div class="p-4 bg-slate-800 border-b border-slate-700">
+        <h2 class="text-base font-bold text-slate-200">最新開獎紀錄</h2>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-slate-700/50 text-slate-300 text-xs uppercase">
-              <th id="th-period" class="p-4">期號</th>
-              <th id="th-numbers" class="p-4">開獎號碼 (萬 千 百 十 個)</th>
-              <th id="th-date" class="p-4">開獎日期</th>
+            <tr class="bg-slate-700/50 text-slate-300 text-xs">
+              <th class="p-4">期號</th>
+              <th class="p-4">開獎號碼</th>
+              <th class="p-4">開獎日期</th>
             </tr>
           </thead>
           <tbody id="lotteryTable" class="divide-y divide-slate-700 text-sm">
-            <!-- 數據將由 JS 填入 -->
+            <tr><td colspan="3" class="p-4 text-center text-slate-400">正在載入數據...</td></tr>
           </tbody>
         </table>
       </div>
@@ -142,248 +83,103 @@
 
   </main>
 
-  <footer class="bg-slate-800 border-t border-slate-700 py-4 mt-8 text-center text-xs text-slate-400">
-    <p>© 2026 排列五數據分析系統 | 客服 Telegram: <a href="https://t.me/AKMi520" class="text-sky-400 font-bold hover:underline">@AKMi520</a></p>
+  <!-- 頁尾 -->
+  <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-400">
+    <p>© 2026 排列五數據分析系統</p>
   </footer>
 
+  <!-- 腳本區域 -->
   <script>
-    let activeDatabase = [];
+    // 預設備用數據（若網路請求超時會自動使用）
+    const defaultData = [
+      { period: "26015", balls: [3, 8, 5, 1, 9], date: "2026-01-15" },
+      { period: "26014", balls: [0, 7, 2, 6, 4], date: "2026-01-14" },
+      { period: "26013", balls: [9, 1, 5, 8, 3], date: "2026-01-13" },
+      { period: "26012", balls: [4, 6, 0, 2, 7], date: "2026-01-12" },
+      { period: "26011", balls: [8, 3, 9, 5, 1], date: "2026-01-11" }
+    ];
 
-    const i18n = {
-      zh: {
-        title: "排列五 中國體彩官方數據看板",
-        subtitle: "數據來源：中國體育彩票網 (每日 21:30 自動刷新)",
-        tgBtn: "聯繫 Telegram 客服",
-        statusLabel: "當前狀態：",
-        refreshBtn: "重新同步數據",
-        analysisTitle: "體彩數據走勢分析",
-        analysisDesc: "根據體彩網最新排列五開獎演算：",
-        recommendTitle: "今日大師/精選 10 組排列五預測",
-        recommendDesc: "綜合冷熱頻率、奇偶比與大小分佈推算的 10 組號碼：",
-        moreRec: "獲取更多導師獨家策略",
-        tableTitle: "中國體彩排列五 最新開獎紀錄",
-        autoRefresh: "已設定每日 21:30 自動更新",
-        thPeriod: "期號",
-        thNumbers: "開獎號碼 (萬 千 百 十 個)",
-        thDate: "開獎日期"
-      },
-      en: {
-        title: "P5 China Sports Lottery Dashboard",
-        subtitle: "Source: Sporttery Official (Auto Sync Daily at 21:30)",
-        tgBtn: "Contact Telegram Support",
-        statusLabel: "Status: ",
-        refreshBtn: "Resync Data",
-        analysisTitle: "Official Data Trends",
-        analysisDesc: "Calculated from official Sporttery draw results:",
-        recommendTitle: "Master Top 10 Predictions",
-        recommendDesc: "10 algorithm-generated combos based on official trends:",
-        moreRec: "Get Exclusive Master Strategies",
-        tableTitle: "Official P5 Draw History",
-        autoRefresh: "Scheduled daily at 21:30",
-        thPeriod: "Draw No.",
-        thNumbers: "Winning Numbers",
-        thDate: "Draw Date"
-      }
-    };
-
-    function changeLanguage(lang) {
-      const dict = i18n[lang] || i18n['zh'];
-      document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
-
-      document.getElementById('ui-title').innerText = dict.title;
-      document.getElementById('ui-subtitle').innerText = dict.subtitle;
-      document.getElementById('ui-tg-btn').innerText = dict.tgBtn;
-      document.getElementById('ui-status-label').innerText = dict.statusLabel;
-      document.getElementById('ui-refresh-btn').innerText = dict.refreshBtn;
-      document.getElementById('ui-analysis-title').innerHTML = `<i class="fa-solid fa-chart-line"></i> ${dict.analysisTitle}`;
-      document.getElementById('ui-analysis-desc').innerText = dict.analysisDesc;
-      document.getElementById('ui-recommend-title').innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> ${dict.recommendTitle}`;
-      document.getElementById('ui-recommend-desc').innerText = dict.recommendDesc;
-      document.getElementById('ui-more-rec').innerText = dict.moreRec;
-      document.getElementById('ui-table-title').innerHTML = `<i class="fa-solid fa-list-ol"></i> ${dict.tableTitle}`;
-      document.getElementById('ui-auto-refresh').innerText = dict.autoRefresh;
-      document.getElementById('th-period').innerText = dict.thPeriod;
-      document.getElementById('th-numbers').innerText = dict.thNumbers;
-      document.getElementById('th-date').innerText = dict.thDate;
-    }
-
-    async function fetchAutoData() {
+    async function loadData() {
       const statusText = document.getElementById('statusText');
       const refreshIcon = document.getElementById('refreshIcon');
-      
+
       refreshIcon.classList.add('fa-spin');
       statusText.className = 'text-xs font-medium text-amber-400';
-      statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在擷取排列五最新數據...`;
+      statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在獲取數據...';
 
       const timestamp = new Date().getTime();
       const targetApi = `https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=350133&provinceId=0&pageSize=10&isVerify=1&pageNo=1&_=${timestamp}`;
-      
-      const proxies = [
-        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetApi)}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(targetApi)}`
-      ];
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetApi)}`;
 
-      let success = false;
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 秒超時
 
-      for (let proxyUrl of proxies) {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const response = await fetch(proxyUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
 
-          const response = await fetch(proxyUrl, { signal: controller.signal });
-          clearTimeout(timeoutId);
-
-          if (!response.ok) continue;
-
-          const realData = await response.json();
-
-          if (realData && realData.value && realData.value.list && realData.value.list.length > 0) {
-            activeDatabase = realData.value.list.map(item => {
-              const balls = item.lotteryDrawResult.trim().split(/\s+/).map(n => parseInt(n, 10));
-              return {
-                period: item.lotteryDrawNum,
-                balls: balls,
-                date: item.lotteryDrawTime
-              };
-            });
-
-            const now = new Date().toLocaleTimeString();
-            statusText.className = 'text-xs font-medium text-emerald-400';
-            statusText.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> 已成功同步最新 ${activeDatabase.length} 期真實數據！(${now})`;
+        if (response.ok) {
+          const resData = await response.json();
+          if (resData && resData.value && resData.value.list) {
+            const list = resData.value.list.map(item => ({
+              period: item.lotteryDrawNum,
+              balls: item.lotteryDrawResult.trim().split(/\s+/).map(n => parseInt(n, 10)),
+              date: item.lotteryDrawTime
+            }));
             
-            renderTable(activeDatabase);
-            processAnalytics(activeDatabase);
-            success = true;
-            break;
+            renderUI(list);
+            statusText.className = 'text-xs font-medium text-emerald-400';
+            statusText.innerHTML = `<i class="fa-solid fa-check mr-1"></i> 已成功載入官方最新數據！(${new Date().toLocaleTimeString()})`;
+            refreshIcon.classList.remove('fa-spin');
+            return;
           }
-        } catch (e) {
-          console.warn('連線嘗試失敗，切換通道...', e);
         }
+      } catch (e) {
+        console.warn('API請求超時或被攔截，切換至備用數據');
       }
 
-      if (!success) {
-        const now = new Date().toLocaleTimeString();
-        statusText.className = 'text-xs font-medium text-rose-400';
-        statusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> 官方 API 連線超時，請點擊「重新同步」再試。(${now})`;
-      }
-
+      // 如果 API 連線失敗，顯示備用數據
+      renderUI(defaultData);
+      statusText.className = 'text-xs font-medium text-slate-400';
+      statusText.innerHTML = `<i class="fa-solid fa-circle-info mr-1"></i> 已顯示預設示範數據（跨域連線受限）`;
       refreshIcon.classList.remove('fa-spin');
     }
 
-    function scheduleNightlyUpdate() {
-      const now = new Date();
-      const target = new Date();
-      target.setHours(21, 30, 0, 0);
-      if (now.getTime() >= target.getTime()) {
-        target.setDate(target.getDate() + 1);
-      }
-      const msUntilTarget = target.getTime() - now.getTime();
-      setTimeout(() => {
-        fetchAutoData();
-        setInterval(fetchAutoData, 24 * 60 * 60 * 1000);
-      }, msUntilTarget);
-    }
-
-    function renderTable(dataList) {
+    function renderUI(dataList) {
+      // 渲染表格
       const tableBody = document.getElementById('lotteryTable');
-      if (!dataList || dataList.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">無數據</td></tr>';
-        return;
-      }
-
-      let htmlBuffer = '';
+      let tableHtml = '';
       dataList.forEach(item => {
-        let ballHtml = '';
-        item.balls.forEach(num => {
-          ballHtml += `<span class="ball ball-red">${num}</span>`;
-        });
-
-        htmlBuffer += `
-          <tr class="hover:bg-slate-700/30 transition">
+        let ballsHtml = item.balls.map(n => `<span class="ball ball-red">${n}</span>`).join('');
+        tableHtml += `
+          <tr class="hover:bg-slate-700/30">
             <td class="p-4 font-mono font-bold text-amber-300">${item.period}</td>
-            <td class="p-4">${ballHtml}</td>
+            <td class="p-4">${ballsHtml}</td>
             <td class="p-4 text-slate-400">${item.date}</td>
           </tr>
         `;
       });
+      tableBody.innerHTML = tableHtml;
 
-      tableBody.innerHTML = htmlBuffer;
-    }
-
-    function processAnalytics(dataList) {
-      if (!dataList || dataList.length === 0) return;
-
-      let numberFreq = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
-      let bigCount = 0, smallCount = 0, oddCount = 0, evenCount = 0;
-
-      dataList.forEach(item => {
-        item.balls.forEach(num => {
-          numberFreq[num] = (numberFreq[num] || 0) + 1;
-          if (num >= 5) bigCount++; else smallCount++;
-          if (num % 2 === 0) evenCount++; else oddCount++;
-        });
-      });
-
-      const sortedFreq = Object.entries(numberFreq)
-        .map(([num, count]) => ({ num: parseInt(num, 10), count }))
-        .sort((a, b) => b.count - a.count);
-
-      const hotList = sortedFreq.map(item => item.num);
-
-      const container = document.getElementById('hotNumbersContainer');
-      let freqHtml = '<span class="text-xs text-slate-400 block w-full mb-1">近期高頻熱號：</span>';
-      sortedFreq.slice(0, 5).forEach(item => {
-        freqHtml += `<span class="px-2 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded text-xs font-mono">號碼 ${item.num} (${item.count}次)</span>`;
-      });
-      container.innerHTML = freqHtml;
-
-      document.getElementById('statRatio').innerText = `大號(5-9): ${bigCount}次 | 小號(0-4): ${smallCount}次`;
-      document.getElementById('statOddEven').innerText = `單號: ${oddCount}次 | 雙號: ${evenCount}次`;
-
-      const recContainer = document.getElementById('recommendedContainer');
+      // 渲染預測號碼
+      const recContainer = document.getElementById('recommendContainer');
       let recHtml = '';
-
-      const strategies = [
-        { label: "01. 熱號突破組合", fn: () => [hotList[0], hotList[1], hotList[2], hotList[3], hotList[4]] },
-        { label: "02. 極致連熱組合", fn: () => [hotList[0], hotList[1], hotList[0], hotList[2], hotList[3]] },
-        { label: "03. 冷熱平衡預測", fn: () => [hotList[0], hotList[1], hotList[2], hotList[8], hotList[9]] },
-        { label: "04. 奇偶均衡組合", fn: () => [hotList[0], hotList[1], hotList[3], hotList[5], hotList[7]] },
-        { label: "05. 大小對稱組合", fn: () => [hotList[1], hotList[2], hotList[4], hotList[6], hotList[8]] },
-        { label: "06. 冷號回補組合", fn: () => [hotList[9], hotList[8], hotList[7], hotList[0], hotList[1]] },
-        { label: "07. 高頻交替組合", fn: () => [hotList[2], hotList[0], hotList[3], hotList[1], hotList[4]] },
-        { label: "08. 趨勢補位組合", fn: () => [hotList[0], hotList[3], hotList[5], hotList[2], hotList[9]] },
-        { label: "09. 概率優選組合", fn: () => [hotList[1], hotList[0], hotList[4], hotList[2], hotList[3]] },
-        { label: "10. 大師終極精選", fn: () => [hotList[0], hotList[2], hotList[1], hotList[3], hotList[5]] }
-      ];
-
-      strategies.forEach(strat => {
-        const combo = strat.fn();
-        let ballsStr = '';
-        combo.forEach(n => {
-          ballsStr += `<span class="ball ball-amber">${n}</span>`;
-        });
-
+      for (let i = 1; i <= 6; i++) {
+        // 隨機生成示範組合
+        let randomCombo = Array.from({length: 5}, () => Math.floor(Math.random() * 10));
+        let ballsStr = randomCombo.map(n => `<span class="ball ball-amber">${n}</span>`).join('');
         recHtml += `
-          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700/80 flex justify-between items-center hover:border-emerald-500/50 transition">
-            <span class="text-xs font-semibold text-slate-300">${strat.label}</span>
-            <div class="flex items-center gap-0.5">${ballsStr}</div>
+          <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 flex justify-between items-center">
+            <span class="text-xs text-slate-300 font-bold">精選組合 ${i}</span>
+            <div>${ballsStr}</div>
           </div>
         `;
-      });
-      
+      }
       recContainer.innerHTML = recHtml;
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      fetchAutoData();
-      scheduleNightlyUpdate();
-    });
+    // 網頁載入後執行一次
+    window.addEventListener('DOMContentLoaded', loadData);
   </script>
 </body>
 </html>
-
-```
-  }
-
-  refreshIcon.classList.remove('fa-spin');
-}
