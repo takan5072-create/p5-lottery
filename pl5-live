@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>排列五 實時數據與趨勢分析看板</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .ball { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; margin: 0 2px; }
+    .ball-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+    .ball-amber { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col justify-between">
+
+  <!-- 頂部導航欄 -->
+  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-amber-500 rounded-lg text-slate-900 font-extrabold text-xl">P5</div>
+        <div>
+          <h1 id="ui-title" class="text-xl font-bold text-amber-400">排列五 數據分析與實時看板</h1>
+          <p id="ui-subtitle" class="text-xs text-slate-400">數據來源：江蘇體彩網 (自動同步)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+        <!-- 語言切換選擇器 (15 國語言) -->
+        <div class="flex items-center gap-1 bg-slate-700 px-2 py-1.5 rounded-lg border border-slate-600">
+          <i class="fa-solid fa-globe text-slate-300"></i>
+          <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer">
+            <option value="zh">繁體中文</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="tr">Türkçe</option>
+            <option value="it">Italiano</option>
+            <option value="hi">हिन्दी</option>
+            <option value="ko">한국어</option>
+            <option value="ja">日本語</option>
+            <option value="vi">Tiếng Việt</option>
+            <option value="th">ไทย</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="ru">Русский</option>
+            <option value="pt">Português</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+
+        <!-- Telegram 客服按鈕 -->
+        <a href="https://t.me/AKMi520" target="_blank" class="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow">
+          <i class="fa-brands fa-telegram text-base"></i>
+          <span id="ui-tg-btn">聯繫 Telegram 客服</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主要內容區 -->
+  <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+
+    <!-- 頂部控制面板與提示 -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-800/80 p-4 rounded-xl border border-slate-700 gap-4">
+      <div>
+        <span id="ui-status-label" class="text-xs font-semibold text-slate-400">當前狀態：</span>
+        <span id="statusText" class="text-xs font-medium text-emerald-400">準備加載數據...</span>
+      </div>
+      <button onclick="fetchData()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 shadow">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span id="ui-refresh-btn">手動刷新數據</span>
+      </button>
+    </div>
+
+    <!-- 數據智能分析與推薦板塊 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- 熱號統計與規律走勢分析 -->
+      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
+        <h2 id="ui-analysis-title" class="text-lg font-bold text-amber-400 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-chart-line"></i> 數據統計與走勢規律
+        </h2>
+        <p id="ui-analysis-desc" class="text-xs text-slate-300 mb-4">系統根據近期開獎結果自動計算冷熱號碼與頻率分佈：</p>
+        <div id="hotNumbersContainer" class="flex flex-wrap gap-2 mb-3">
+          <span class="text-xs text-slate-400">等待資料分析...</span>
+        </div>
+        <div id="statsSummary" class="text-xs text-slate-300 bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 space-y-1">
+          <div>大小比率分析：<span id="statRatio" class="text-amber-300 font-mono">-</span></div>
+          <div>單雙規律分佈：<span id="statOddEven" class="text-emerald-300 font-mono">-</span></div>
+        </div>
+      </div>
+
+      <!-- AI / 大師歷史推薦號碼 -->
+      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg flex flex-col justify-between">
+        <div>
+          <h2 id="ui-recommend-title" class="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> 今日大師/數據推薦號碼
+          </h2>
+          <p id="ui-recommend-desc" class="text-xs text-slate-300 mb-4">基於歷史週期走勢演算法自動推算的明日推薦組合：</p>
+          
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-emerald-500/30 text-center mb-3">
+            <span id="ui-rec-label" class="text-xs text-slate-400 block mb-2">精選推薦組合</span>
+            <div id="recommendedBalls" class="flex justify-center items-center gap-1">
+              <span class="ball ball-amber">?</span>
+              <span class="ball ball-amber">?</span>
+              <span class="ball ball-amber">?</span>
+              <span class="ball ball-amber">?</span>
+              <span class="ball ball-amber">?</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <a href="https://t.me/AKMi520" target="_blank" class="text-xs text-sky-400 hover:underline inline-flex items-center gap-1">
+            <i class="fa-brands fa-telegram"></i> <span id="ui-more-rec">獲取更多導師獨家策略</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 實時歷史開獎走勢數據表格 -->
+    <div class="bg-slate-800 rounded-xl shadow-xl overflow-hidden border border-slate-700">
+      <div class="p-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
+        <h2 id="ui-table-title" class="text-base font-bold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-list-ol"></i> 排列五歷史開獎紀錄
+        </h2>
+        <span class="text-xs text-slate-400" id="ui-auto-refresh">每 60 秒自動更新</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-700/50 text-slate-300 text-xs uppercase">
+              <th id="th-period" class="p-4">期號</th>
+              <th id="th-numbers" class="p-4">開獎號碼 (萬 千 百 十 個)</th>
+              <th id="th-date" class="p-4">開獎日期</th>
+            </tr>
+          </thead>
+          <tbody id="lotteryTable" class="divide-y divide-slate-700 text-sm">
+            <tr>
+              <td colspan="3" class="p-8 text-center text-slate-400">正在獲取最新數據，請稍候...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 頁腳 -->
+  <footer class="bg-slate-800 border-t border-slate-700 py-4 mt-8 text-center text-xs text-slate-400">
+    <p>© 2026 排列五數據分析系統 | 客服 Telegram: <a href="https://t.me/AKMi520" class="text-sky-400 font-bold hover:underline">@AKMi520</a></p>
+  </footer>
+
+  <script>
+    // 數據源與公共 CORS 代理設置
+    const TARGET_URL = 'https://www.js-lottery.com/wfzq/p3p5/p5data';
+    const PROXY_URL = `https://corsproxy.io/?${encodeURIComponent(TARGET_URL)}`;
+
+    // 多國語言字典
+    const i18n = {
+      zh: {
+        title: "排列五 數據分析與實時看板",
+        subtitle: "數據來源：江蘇體彩網 (自動同步)",
+        tgBtn: "聯繫 Telegram 客服",
+        statusLabel: "當前狀態：",
+        refreshBtn: "手動刷新數據",
+        analysisTitle: "數據統計與走勢規律",
+        analysisDesc: "系統根據近期開獎結果自動計算冷熱號碼與頻率分佈：",
+        recommendTitle: "今日大師/數據推薦號碼",
+        recommendDesc: "基於歷史週期走勢演算法自動推算的明日推薦組合：",
+        recLabel: "精選推薦組合",
+        moreRec: "獲取更多導師獨家策略",
+        tableTitle: "排列五歷史開獎紀錄",
+        autoRefresh: "每 60 秒自動更新",
+        thPeriod: "期號",
+        thNumbers: "開獎號碼 (萬 千 百 十 個)",
+        thDate: "開獎日期",
+        loading: "正在獲取最新數據...",
+        success: "更新成功",
+        fail: "加載失敗，請手動刷新"
+      },
+      en: {
+        title: "P5 Lottery Data Analysis & Dashboard",
+        subtitle: "Source: JS Lottery (Auto Sync)",
+        tgBtn: "Contact Telegram Support",
+        statusLabel: "Status: ",
+        refreshBtn: "Refresh Data",
+        analysisTitle: "Statistics & Trend Rules",
+        analysisDesc: "Frequency & hot/cold numbers automatically calculated from recent draws:",
+        recommendTitle: "Master Recommendation",
+        recommendDesc: "Algorithmic recommendations derived from historical trend cycles:",
+        recLabel: "Featured Numbers",
+        moreRec: "Get Exclusive Master Strategies",
+        tableTitle: "P5 Draw History",
+        autoRefresh: "Auto refreshed every 60s",
+        thPeriod: "Draw No.",
+        thNumbers: "Winning Numbers",
+        thDate: "Draw Date",
+        loading: "Fetching latest data...",
+        success: "Updated successfully",
+        fail: "Failed to load, click refresh"
+      },
+      es: { title: "Análisis y Panel de Lotería P5", subtitle: "Fuente: JS Lottery", tgBtn: "Telegram Soporte", statusLabel: "Estado: ", refreshBtn: "Actualizar", analysisTitle: "Estadísticas y Tendencias", analysisDesc: "Análisis de frecuencia:", recommendTitle: "Recomendación del Maestro", recommendDesc: "Predicciones basadas en algoritmos:", recLabel: "Números Seleccionados", moreRec: "Más Estrategias en Telegram", tableTitle: "Historial de Sorteos", autoRefresh: "Actualización auto cada 60s", thPeriod: "Sorteo N°", thNumbers: "Números Ganadores", thDate: "Fecha", loading: "Cargando...", success: "Actualizado", fail: "Error al cargar" },
+      tr: { title: "P5 Piyango Veri Analizi ve Paneli", subtitle: "Kaynak: JS Lottery", tgBtn: "Telegram Destek", statusLabel: "Durum: ", refreshBtn: "Yenile", analysisTitle: "İstatistikler ve Trendler", analysisDesc: "Sıcak/soğuk numara analizi:", recommendTitle: "Usta Önerisi", recommendDesc: "Algoritma destekli tahminler:", recLabel: "Öne Çıkan Sayılar", moreRec: "Detaylı Stratejiler Telegram'da", tableTitle: "Çekiliş Geçmişi", autoRefresh: "Her 60s otomatik yenilenir", thPeriod: "Çekiliş No", thNumbers: "Kazanan Sayılar", thDate: "Tarih", loading: "Yükleniyor...", success: "Güncellendi", fail: "Yükleme başarısız" },
+      it: { title: "Analisi Dati e Dashboard Lotto P5", subtitle: "Fonte: JS Lottery", tgBtn: "Supporto Telegram", statusLabel: "Stato: ", refreshBtn: "Aggiorna", analysisTitle: "Statistiche e Tendenze", analysisDesc: "Numeri frequenti e ritardi:", recommendTitle: "Consigli dell'Esperto", recommendDesc: "Previsioni basate su algoritmi:", recLabel: "Numeri Consigliati", moreRec: "Strategie su Telegram", tableTitle: "Cronologia Estrazioni", autoRefresh: "Aggiornato ogni 60s", thPeriod: "Estrazione N°", thNumbers: "Numeri Estratti", thDate: "Data", loading: "Caricamento...", success: "Aggiornato", fail: "Errore nel caricamento" },
+      hi: { title: "P5 लॉटरी डेटा विश्लेषण और डैशबोर्ड", subtitle: "स्रोत: JS Lottery", tgBtn: "टेलीग्राम सहायता", statusLabel: "स्थिति: ", refreshBtn: "रिफ्रेश करें", analysisTitle: "आंकड़े और रुझान", analysisDesc: "आवृत्ति और रुझान विश्लेषण:", recommendTitle: "विशेषज्ञ की सिफारिश", recommendDesc: "अल्गोरिदम आधारित भविष्यवाणियां:", recLabel: "चुने गए नंबर", moreRec: "टेलीग्राम पर अधिक रणनीतियां", tableTitle: "ड्रा इतिहास", autoRefresh: "हर 60s में ऑटो अपडेट", thPeriod: "ड्रा संख्या", thNumbers: "जीतने वाले नंबर", thDate: "तिथि", loading: "लोड हो रहा है...", success: "अपडेट सफल", fail: "लोड विफल" },
+      ko: { title: "P5 로또 데이터 분석 및 실시간 대시보드", subtitle: "출처: JS Lottery", tgBtn: "텔레그램 문의", statusLabel: "상태: ", refreshBtn: "새로고침", analysisTitle: "통계 및 패턴 분석", analysisDesc: "최근 당첨 번호 빈도 및 분석:", recommendTitle: "마스터 추천 번호", recommendDesc: "히스토리 패턴 분석 추천:", recLabel: "추천 번호 조합", moreRec: "텔레그램에서 더 보기", tableTitle: "당첨 히스토리", autoRefresh: "60초마다 자동 갱신", thPeriod: "회차", thNumbers: "당첨 번호", thDate: "추첨일", loading: "데이터 로딩 중...", success: "업데이트 완료", fail: "로딩 실패" },
+      ja: { title: "P5 宝くじデータ分析＆リアルタイムボード", subtitle: "情報元：JS Lottery", tgBtn: "Telegram カスタマーサポート", statusLabel: "ステータス: ", refreshBtn: "更新", analysisTitle: "統計＆トレンド分析", analysisDesc: "直近の出目頻度と冷熱分析：", recommendTitle: "マスター予想ナンバー", recommendDesc: "過去データアルゴリズム推測：", recLabel: "厳選おすすめ番号", moreRec: "Telegramで限定戦略を入手", tableTitle: "抽せん履歴", autoRefresh: "60秒毎に自動更新", thPeriod: "回号", thNumbers: "当せん番号", thDate: "抽せん日", loading: "データ取得中...", success: "更新成功", fail: "取得失敗" },
+      vi: { title: "Phân Tích Dữ Liệu & Bảng Điều Khiển Xổ Số P5", subtitle: "Nguồn: JS Lottery", tgBtn: "Hỗ Trợ Telegram", statusLabel: "Trạng thái: ", refreshBtn: "Làm mới", analysisTitle: "Thống Kê & Xu Hướng", analysisDesc: "Phân tích tần suất số:", recommendTitle: "Gợi Ý Từ Chuyên Gia", recommendDesc: "Dự đoán dựa trên thuật toán:", recLabel: "Bộ Số Gợi Ý", moreRec: "Xem Thêm Chiến Lược Trên Telegram", tableTitle: "Lịch Sử Mở Thưởng", autoRefresh: "Tự động cập nhật mỗi 60s", thPeriod: "Kỳ", thNumbers: "Dãy Số Trúng", thDate: "Ngày", loading: "Đang tải dữ liệu...", success: "Cập nhật thành công", fail: "Lỗi tải dữ liệu" },
+      th: { title: "วิเคราะห์ข้อมูลและแดชบอร์ดหวย P5", subtitle: "แหล่งข้อมูล: JS Lottery", tgBtn: "ฝ่ายบริการ Telegram", statusLabel: "สถานะ: ", refreshBtn: "รีเฟรช", analysisTitle: "สถิติและแนวโน้ม", analysisDesc: "วิเคราะห์ความถี่ของตัวเลข:", recommendTitle: "ตัวเลขแนะนำจากผู้เชี่ยวชาญ", recommendDesc: "การทำนายด้วยอัลกอริทึม:", recLabel: "ชุดตัวเลขแนะนำ", moreRec: "รับกลยุทธ์เพิ่มเติมที่ Telegram", tableTitle: "ประวัติการออกรางวัล", autoRefresh: "อัปเดตอัตโนมัติทุก 60 วินาที", thPeriod: "งวดที่", thNumbers: "ผลการออกรางวัล", thDate: "วันที่", loading: "กำลังโหลดข้อมูล...", success: "อัปเดตสำเร็จ", fail: "โหลดไม่สำเร็จ" },
+      fr: { title: "Analyse des Données et Tableau de Bord P5", subtitle: "Source: JS Lottery", tgBtn: "Support Telegram", statusLabel: "Statut: ", refreshBtn: "Actualiser", analysisTitle: "Statistiques et Tendances", analysisDesc: "Analyse de fréquence des numéros:", recommendTitle: "Recommandation de l'Expert", recommendDesc: "Prédictions basées sur un algorithme:", recLabel: "Numéros Sélectionnés", moreRec: "Plus de Stratégies sur Telegram", tableTitle: "Historique des Tirages", autoRefresh: "Auto-actualisé toutes les 60s", thPeriod: "N° Tirage", thNumbers: "Numéros Gagnants", thDate: "Date", loading: "Chargement...", success: "Mis à jour", fail: "Échec du chargement" },
+      de: { title: "P5 Lotterie Datenanalyse & Dashboard", subtitle: "Quelle: JS Lottery", tgBtn: "Telegram Support", statusLabel: "Status: ", refreshBtn: "Aktualisieren", analysisTitle: "Statistiken & Trends", analysisDesc: "Häufigkeits- & Trendanalyse:", recommendTitle: "Experten-Empfehlung", recommendDesc: "Algorithmus-basierte Vorhersagen:", recLabel: "Ausgewählte Zahlen", moreRec: "Weitere Strategien auf Telegram", tableTitle: "Ziehungshistorie", autoRefresh: "Automatisch alle 60s aktualisiert", thPeriod: "Ziehung Nr.", thNumbers: "Gewinnzahlen", thDate: "Datum", loading: "Daten werden geladen...", success: "Erfolgreich aktualisiert", fail: "Laden fehlgeschlagen" },
+      ru: { title: "Анализ Данных и Панель Лотереи P5", subtitle: "Источник: JS Lottery", tgBtn: "Поддержка в Telegram", statusLabel: "Статус: ", refreshBtn: "Обновить", analysisTitle: "Статистика и Тренды", analysisDesc: "Анализ частоты выпадения чисел:", recommendTitle: "Рекомендации Эксперта", recommendDesc: "Прогноз на основе алгоритма:", recLabel: "Рекомендуемые Номера", moreRec: "Больше Стратегий в Telegram", tableTitle: "История Тиражей", autoRefresh: "Автообновление каждые 60с", thPeriod: "Тираж №", thNumbers: "Выигрышные Номера", thDate: "Дата", loading: "Загрузка данных...", success: "Успешно обновлено", fail: "Ошибка загрузки" },
+      pt: { title: "Análise de Dados e Painel da Loteria P5", subtitle: "Fonte: JS Lottery", tgBtn: "Suporte Telegram", statusLabel: "Status: ", refreshBtn: "Atualizar", analysisTitle: "Estatísticas e Tendências", analysisDesc: "Análise de frequência de números:", recommendTitle: "Recomendação do Mestre", recommendDesc: "Previsões baseadas em algoritmo:", recLabel: "Números Selecionados", moreRec: "Mais Estratégias no Telegram", tableTitle: "Histórico de Sorteios", autoRefresh: "Atualizado a cada 60s", thPeriod: "Concurso N°", thNumbers: "Números Sorteados", thDate: "Data", loading: "Carregando...", success: "Atualizado com sucesso", fail: "Falha ao carregar" },
+      ar: { title: "تحليل بيانات لوترية P5 واللوحة التفاعلية", subtitle: "المصدر: JS Lottery", tgBtn: "دعم التليجرام", statusLabel: "الحالة: ", refreshBtn: "تحديث", analysisTitle: "الإحصائيات والاتجاهات", analysisDesc: "تحليل تكرار الأرقام والأرقام الساخنة/الباردة:", recommendTitle: "توصيات الخبراء", recommendDesc: "توقعات خوارزمية قائمة على السجل التاريخي:", recLabel: "الأرقام المختارة", moreRec: "احصل على المزيد عبر التليجرام", tableTitle: "سجل السحوبات", autoRefresh: "تحديث تلقائي كل 60 ثانية", thPeriod: "رقم السحب", thNumbers: "الأرقام الفائزة", thDate: "التاريخ", loading: "جاري التحميل...", success: "تم التحديث بنجاح", fail: "فشل التحميل" }
+    };
+
+    let currentLang = 'zh';
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      const dict = i18n[lang] || i18n['zh'];
+      
+      // 切換文字方向 (針對阿拉伯語 RTL)
+      document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+      document.getElementById('ui-title').innerText = dict.title;
+      document.getElementById('ui-subtitle').innerText = dict.subtitle;
+      document.getElementById('ui-tg-btn').innerText = dict.tgBtn;
+      document.getElementById('ui-status-label').innerText = dict.statusLabel;
+      document.getElementById('ui-refresh-btn').innerText = dict.refreshBtn;
+      document.getElementById('ui-analysis-title').innerHTML = `<i class="fa-solid fa-chart-line"></i> ${dict.analysisTitle}`;
+      document.getElementById('ui-analysis-desc').innerText = dict.analysisDesc;
+      document.getElementById('ui-recommend-title').innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> ${dict.recommendTitle}`;
+      document.getElementById('ui-recommend-desc').innerText = dict.recommendDesc;
+      document.getElementById('ui-rec-label').innerText = dict.recLabel;
+      document.getElementById('ui-more-rec').innerText = dict.moreRec;
+      document.getElementById('ui-table-title').innerHTML = `<i class="fa-solid fa-list-ol"></i> ${dict.tableTitle}`;
+      document.getElementById('ui-auto-refresh').innerText = dict.autoRefresh;
+      document.getElementById('th-period').innerText = dict.thPeriod;
+      document.getElementById('th-numbers').innerText = dict.thNumbers;
+      document.getElementById('th-date').innerText = dict.thDate;
+    }
+
+    async function fetchData() {
+      const statusText = document.getElementById('statusText');
+      const tableBody = document.getElementById('lotteryTable');
+      const dict = i18n[currentLang] || i18n['zh'];
+      
+      statusText.innerText = dict.loading;
+      statusText.className = 'text-xs font-medium text-amber-400';
+
+      try {
+        const response = await fetch(PROXY_URL);
+        if (!response.ok) throw new Error('Network error');
+        
+        const htmlText = await response.text();
+
+        // 解析 HTML 數據
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, 'text/html');
+        const rows = doc.querySelectorAll('tr');
+        
+        let htmlBuffer = '';
+        let count = 0;
+        let numberFrequency = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+        let totalBalls = 0;
+        let oddCount = 0;
+        let evenCount = 0;
+        let bigCount = 0;
+        let smallCount = 0;
+
+        rows.forEach(row => {
+          const cells = row.querySelectorAll('td');
+          if (cells.length >= 3) {
+            const period = cells[0].innerText.trim();
+            const numbersStr = cells[1].innerText.trim();
+            const date = cells[2]?.innerText.trim() || '-';
+
+            if (period && numbersStr) {
+              count++;
+              
+              // 拆分號碼渲染成漂亮的圓球
+              const nums = numbersStr.split(/[\s,-]+/);
+              let ballHtml = '';
+              
+              nums.forEach(n => {
+                const numInt = parseInt(n, 10);
+                if (!isNaN(numInt)) {
+                  numberFrequency[numInt] = (numberFrequency[numInt] || 0) + 1;
+                  totalBalls++;
+                  if (numInt % 2 === 0) evenCount++; else oddCount++;
+                  if (numInt >= 5) bigCount++; else smallCount++;
+                }
+                ballHtml += `<span class="ball ball-red">${n}</span>`;
+              });
+
+              htmlBuffer += `
+                <tr class="hover:bg-slate-700/30 transition">
+                  <td class="p-4 font-mono font-bold text-amber-300">${period}</td>
+                  <td class="p-4">${ballHtml}</td>
+                  <td class="p-4 text-slate-400">${date}</td>
+                </tr>
+              `;
+            }
+          }
+        });
+
+        if (count > 0) {
+          tableBody.innerHTML = htmlBuffer;
+          const now = new Date().toLocaleTimeString();
+          statusText.innerText = `${dict.success} (${now})`;
+          statusText.className = 'text-xs font-medium text-emerald-400';
+
+          // 計算熱門號碼統計
+          renderAnalysis(numberFrequency, totalBalls, bigCount, smallCount, oddCount, evenCount);
+        } else {
+          tableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-amber-400">暫無開獎數據</td></tr>`;
+          statusText.innerText = dict.fail;
+          statusText.className = 'text-xs font-medium text-red-400';
+        }
+      } catch (err) {
+        console.error(err);
+        tableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-red-400">${dict.fail} (${err.message})</td></tr>`;
+        statusText.innerText = dict.fail;
+        statusText.className = 'text-xs font-medium text-red-400';
+      }
+    }
+
+    // 渲染冷熱統計與號碼推薦
+    function renderAnalysis(freq, total, big, small, odd, even) {
+      const container = document.getElementById('hotNumbersContainer');
+      const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+
+      let freqHtml = '<span class="text-xs text-slate-400 block w-full mb-1">最熱門號碼排行：</span>';
+      sorted.slice(0, 5).forEach(([num, count]) => {
+        freqHtml += `<span class="px-2 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded text-xs font-mono">號碼 ${num} (${count}次)</span>`;
+      });
+      container.innerHTML = freqHtml;
+
+      // 統計比率
+      document.getElementById('statRatio').innerText = `大號(5-9): ${big} 次 | 小號(0-4): ${small} 次`;
+      document.getElementById('statOddEven').innerText = `單號: ${odd} 次 | 雙號: ${even} 次`;
+
+      // 基於統計頻率的推薦組合生成
+      const recommended = sorted.slice(0, 5).map(item => item[0]);
+      const recContainer = document.getElementById('recommendedBalls');
+      
+      let recHtml = '';
+      recommended.forEach(n => {
+        recHtml += `<span class="ball ball-amber">${n}</span>`;
+      });
+      recContainer.innerHTML = recHtml;
+    }
+
+    // 初始載入與定時刷新
+    fetchData();
+    setInterval(fetchData, 60000);
+  </script>
+</body>
+</html>
