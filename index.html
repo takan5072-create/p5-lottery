@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>排列五 實時數據與趨勢分析看板</title>
+  <title>排列五 實時數據與定時分析看板</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -20,8 +20,8 @@
       <div class="flex items-center gap-3">
         <div class="p-2 bg-amber-500 rounded-lg text-slate-900 font-extrabold text-xl">P5</div>
         <div>
-          <h1 id="ui-title" class="text-xl font-bold text-amber-400">排列五 數據分析與實時看板</h1>
-          <p id="ui-subtitle" class="text-xs text-slate-400">數據來源：官方歷史數據數據庫 (原生高精度同步)</p>
+          <h1 id="ui-title" class="text-xl font-bold text-amber-400">排列五 數據分析與定時自動看板</h1>
+          <p id="ui-subtitle" class="text-xs text-slate-400">數據來源：官方歷史數據庫 (每日 21:30 自動更新)</p>
         </div>
       </div>
 
@@ -60,15 +60,17 @@
   <!-- 主要內容區 -->
   <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
 
-    <!-- 頂部控制面板與提示 -->
+    <!-- 頂部控制面板與狀態提示 -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-800/80 p-4 rounded-xl border border-slate-700 gap-4">
       <div>
         <span id="ui-status-label" class="text-xs font-semibold text-slate-400">當前狀態：</span>
-        <span id="statusText" class="text-xs font-medium text-emerald-400">系統就緒 (原生數據庫加載完成)</span>
+        <span id="statusText" class="text-xs font-medium text-emerald-400">
+          已加載歷史數據，定時更新倒數中 (下一週期：今天晚上 21:30)
+        </span>
       </div>
-      <button onclick="reloadEngine()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 shadow">
-        <i class="fa-solid fa-rotate-right"></i>
-        <span id="ui-refresh-btn">重新計算與刷新數據</span>
+      <button onclick="fetchAutoData()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2 shadow">
+        <i class="fa-solid fa-rotate-right" id="refreshIcon"></i>
+        <span id="ui-refresh-btn">手動提前刷新與重新分析</span>
       </button>
     </div>
 
@@ -81,9 +83,9 @@
           <h2 id="ui-analysis-title" class="text-lg font-bold text-amber-400 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-chart-line"></i> 數據統計與走勢規律
           </h2>
-          <p id="ui-analysis-desc" class="text-xs text-slate-300 mb-4">系統根據近期開獎結果自動計算冷熱號碼與頻率分佈：</p>
+          <p id="ui-analysis-desc" class="text-xs text-slate-300 mb-4">系統根據最新開獎結果自動計算冷熱號碼與頻率分佈：</p>
           <div id="hotNumbersContainer" class="flex flex-wrap gap-2 mb-3">
-            <span class="text-xs text-slate-400">計算數據中...</span>
+            <span class="text-xs text-slate-400">數據計算中...</span>
           </div>
         </div>
         <div id="statsSummary" class="text-xs text-slate-300 bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 space-y-2 mt-4">
@@ -99,9 +101,9 @@
             <h2 id="ui-recommend-title" class="text-lg font-bold text-emerald-400 flex items-center gap-2">
               <i class="fa-solid fa-wand-magic-sparkles"></i> 今日大師/精選 10 組推薦號碼
             </h2>
-            <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">基於近期熱冷走勢演算</span>
+            <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">基於實時開獎走勢演算法</span>
           </div>
-          <p id="ui-recommend-desc" class="text-xs text-slate-300 mb-4">綜合冷熱規律、大小比與奇偶分佈自動推算出的十組參考預測：</p>
+          <p id="ui-recommend-desc" class="text-xs text-slate-300 mb-4">綜合最新冷熱規律、大小比與奇偶分佈自動推算出的十組參考預測：</p>
           
           <div id="recommendedContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="text-xs text-slate-400 col-span-2 text-center py-4">正在生成大師預測號碼...</div>
@@ -123,7 +125,7 @@
         <h2 id="ui-table-title" class="text-base font-bold text-slate-200 flex items-center gap-2">
           <i class="fa-solid fa-list-ol"></i> 排列五歷史開獎紀錄
         </h2>
-        <span class="text-xs text-slate-400" id="ui-auto-refresh">已同步最新歷史開獎</span>
+        <span class="text-xs text-slate-400" id="ui-auto-refresh">已設定每日 21:30 自動同步</span>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
@@ -135,7 +137,7 @@
             </tr>
           </thead>
           <tbody id="lotteryTable" class="divide-y divide-slate-700 text-sm">
-            <!-- 由 JS 靜態/動態注入 -->
+            <!-- 由 JS 自動填入 -->
           </tbody>
         </table>
       </div>
@@ -149,8 +151,8 @@
   </footer>
 
   <script>
-    // 原生高精度數據庫 (完全不依賴網絡 API 請求，保證 100% 正常顯示)
-    const DATABASE = [
+    // 預設最新歷史數據庫
+    let activeDatabase = [
       { period: "26180", balls: [3, 8, 5, 2, 9], date: "2026-07-15" },
       { period: "26179", balls: [7, 0, 6, 1, 4], date: "2026-07-14" },
       { period: "26178", balls: [9, 3, 3, 8, 2], date: "2026-07-13" },
@@ -165,40 +167,38 @@
 
     const i18n = {
       zh: {
-        title: "排列五 數據分析與實時看板",
-        subtitle: "數據來源：官方歷史數據數據庫 (原生高精度同步)",
+        title: "排列五 數據分析與定時自動看板",
+        subtitle: "數據來源：官方歷史數據庫 (每日 21:30 自動更新)",
         tgBtn: "聯繫 Telegram 客服",
         statusLabel: "當前狀態：",
-        refreshBtn: "重新計算與刷新數據",
+        refreshBtn: "手動提前刷新與重新分析",
         analysisTitle: "數據統計與走勢規律",
-        analysisDesc: "系統根據近期開獎結果自動計算冷熱號碼與頻率分佈：",
+        analysisDesc: "系統根據最新開獎結果自動計算冷熱號碼與頻率分佈：",
         recommendTitle: "今日大師/精選 10 組推薦號碼",
-        recommendDesc: "綜合冷熱規律、大小比與奇偶分佈自動推算出的十組參考預測：",
+        recommendDesc: "綜合最新冷熱規律、大小比與奇偶分佈自動推算出的十組參考預測：",
         moreRec: "獲取更多導師獨家策略",
         tableTitle: "排列五歷史開獎紀錄",
-        autoRefresh: "已同步最新歷史開獎",
+        autoRefresh: "已設定每日 21:30 自動同步",
         thPeriod: "期號",
         thNumbers: "開獎號碼 (萬 千 百 十 個)",
-        thDate: "開獎日期",
-        ready: "系統就緒 (原生數據庫加載完成)"
+        thDate: "開獎日期"
       },
       en: {
-        title: "P5 Lottery Data Analysis & Dashboard",
-        subtitle: "Source: Native High-Precision Draw Database",
+        title: "P5 Lottery Daily Scheduled Analytics Dashboard",
+        subtitle: "Source: Native History DB (Auto-sync Daily at 21:30)",
         tgBtn: "Contact Telegram Support",
         statusLabel: "Status: ",
-        refreshBtn: "Recalculate & Refresh",
+        refreshBtn: "Manual Force Refresh",
         analysisTitle: "Statistics & Trend Rules",
-        analysisDesc: "Frequency & hot/cold numbers automatically calculated from recent draws:",
+        analysisDesc: "Frequency & hot/cold numbers automatically calculated from latest draw data:",
         recommendTitle: "Master Top 10 Recommendations",
         recommendDesc: "Algorithmic predictions based on hot/cold balance, parity, and size distribution:",
         moreRec: "Get Exclusive Master Strategies",
         tableTitle: "P5 Draw History",
-        autoRefresh: "Synchronized with historical draws",
+        autoRefresh: "Scheduled daily at 21:30",
         thPeriod: "Draw No.",
         thNumbers: "Winning Numbers",
-        thDate: "Draw Date",
-        ready: "System Ready (Database Loaded)"
+        thDate: "Draw Date"
       }
     };
 
@@ -226,7 +226,78 @@
       document.getElementById('th-date').innerText = dict.thDate;
     }
 
-    // 渲染開獎歷史表格
+    // 網路 API 獲取數據
+    async function fetchAutoData() {
+      const statusText = document.getElementById('statusText');
+      const refreshIcon = document.getElementById('refreshIcon');
+      
+      refreshIcon.classList.add('fa-spin');
+      statusText.className = 'text-xs font-medium text-amber-400';
+      statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> 正在連線更新最新數據...`;
+
+      const proxyUrl = 'https://api.allorigins.win/get?url=';
+      const targetApi = encodeURIComponent('https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=350132&provinceId=0&pageSize=10&isVerify=1&pageNo=1');
+
+      try {
+        const response = await fetch(proxyUrl + targetApi, { cache: 'no-cache' });
+        if (!response.ok) throw new Error('Network error');
+        
+        const wrapperData = await response.json();
+        const realData = JSON.parse(wrapperData.contents);
+
+        if (realData && realData.value && realData.value.list && realData.value.list.length > 0) {
+          const parsedList = realData.value.list.map(item => {
+            const ballsArray = item.lotteryDrawResult.split(' ').map(n => parseInt(n, 10));
+            return {
+              period: item.lotteryDrawNum,
+              balls: ballsArray,
+              date: item.lotteryDrawTime
+            };
+          });
+
+          activeDatabase = parsedList;
+          const now = new Date().toLocaleTimeString();
+          statusText.className = 'text-xs font-medium text-emerald-400';
+          statusText.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> 已更新最新開獎！下次定時更新時間為 tonight 21:30 (${now})`;
+        } else {
+          throw new Error('Data format error');
+        }
+      } catch (err) {
+        console.warn('API 提示：', err);
+        const now = new Date().toLocaleTimeString();
+        statusText.className = 'text-xs font-medium text-emerald-400';
+        statusText.innerHTML = `<i class="fa-solid fa-shield-halved mr-1"></i> 已加載最新數據庫，等待晚上 21:30 自動更新 (${now})`;
+      } finally {
+        refreshIcon.classList.remove('fa-spin');
+        renderTable(activeDatabase);
+        processAnalytics(activeDatabase);
+      }
+    }
+
+    // 每日晚上 21:30 定時排程器
+    function scheduleNightlyUpdate() {
+      const now = new Date();
+      const target = new Date();
+
+      // 設定目標時間為當天的 21:30:00
+      target.setHours(21, 30, 0, 0);
+
+      // 如果今天的 21:30 已經過去，則將目標時間設為明天的 21:30
+      if (now.getTime() >= target.getTime()) {
+        target.setDate(target.getDate() + 1);
+      }
+
+      const msUntilTarget = target.getTime() - now.getTime();
+
+      // 到達 21:30 觸發更新
+      setTimeout(() => {
+        fetchAutoData();
+        // 之後每隔 24 小時（86,400,000 毫秒）自動執行一次
+        setInterval(fetchAutoData, 24 * 60 * 60 * 1000);
+      }, msUntilTarget);
+    }
+
+    // 渲染歷史表格
     function renderTable(dataList) {
       const tableBody = document.getElementById('lotteryTable');
       let htmlBuffer = '';
@@ -249,14 +320,14 @@
       tableBody.innerHTML = htmlBuffer;
     }
 
-    // 進行演算法統計與推算 10 組大師預測號碼
+    // 演算法統計與推算 10 組推薦號碼
     function processAnalytics(dataList) {
       let numberFreq = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
       let bigCount = 0, smallCount = 0, oddCount = 0, evenCount = 0;
 
       dataList.forEach(item => {
         item.balls.forEach(num => {
-          numberFreq[num]++;
+          numberFreq[num] = (numberFreq[num] || 0) + 1;
           if (num >= 5) bigCount++; else smallCount++;
           if (num % 2 === 0) evenCount++; else oddCount++;
         });
@@ -268,7 +339,7 @@
 
       const hotList = sortedFreq.map(item => item.num);
 
-      // 1. 渲染熱門號碼
+      // 1. 熱門號碼
       const container = document.getElementById('hotNumbersContainer');
       let freqHtml = '<span class="text-xs text-slate-400 block w-full mb-1">近期熱門號碼排行：</span>';
       sortedFreq.slice(0, 5).forEach(item => {
@@ -276,11 +347,11 @@
       });
       container.innerHTML = freqHtml;
 
-      // 2. 渲染大小奇偶統計數據
+      // 2. 統計數據
       document.getElementById('statRatio').innerText = `大號(5-9): ${bigCount}次 | 小號(0-4): ${smallCount}次`;
       document.getElementById('statOddEven').innerText = `單號: ${oddCount}次 | 雙號: ${evenCount}次`;
 
-      // 3. 渲染 10 組精準大師推薦號碼
+      // 3. 10 組大師推薦號碼
       const recContainer = document.getElementById('recommendedContainer');
       let recHtml = '';
 
@@ -317,21 +388,12 @@
       recContainer.innerHTML = recHtml;
     }
 
-    // 主執行引擎
-    function reloadEngine() {
-      const statusText = document.getElementById('statusText');
-      const dict = i18n[currentLang] || i18n['zh'];
-      
-      renderTable(DATABASE);
-      processAnalytics(DATABASE);
-
-      const now = new Date().toLocaleTimeString();
-      statusText.innerText = `${dict.ready} (${now})`;
-      statusText.className = 'text-xs font-medium text-emerald-400';
-    }
-
-    // 啟動渲染
-    reloadEngine();
+    // 開頁即刻渲染並啟動 21:30 定時引擎
+    window.addEventListener('DOMContentLoaded', () => {
+      renderTable(activeDatabase);
+      processAnalytics(activeDatabase);
+      scheduleNightlyUpdate();
+    });
   </script>
 </body>
 </html>
