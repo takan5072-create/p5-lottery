@@ -18,7 +18,6 @@
             background: #f4f7fc;
             color: #1a2639;
             padding: 1.5rem;
-            transition: background 0.2s;
         }
         .container {
             max-width: 1400px;
@@ -53,96 +52,103 @@
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 1rem;
+            gap: 0.8rem;
         }
         .countdown-badge {
             background: #1e2f4a;
             color: white;
-            padding: 0.5rem 1.2rem;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 1rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
-        .countdown-badge i {
-            color: #facc15;
-        }
+        .countdown-badge i { color: #facc15; }
         .telegram-btn {
             background: #1e90ff;
             color: white;
             border: none;
-            padding: 0.5rem 1.2rem;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: 0.2s;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             box-shadow: 0 4px 8px rgba(30, 144, 255, 0.2);
         }
         .telegram-btn:hover {
             background: #0d6efd;
             transform: scale(1.01);
         }
-        .lang-selector {
+        /* 紧凑语言切换 */
+        .lang-compact {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.3rem;
+            align-items: center;
+            gap: 0.2rem;
             background: white;
-            padding: 0.2rem 0.6rem;
+            padding: 0.1rem 0.4rem;
             border-radius: 40px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #e6ecf3;
+            flex-wrap: wrap;
+            max-width: 300px;
         }
-        .lang-btn {
+        .lang-compact .lang-btn {
             background: transparent;
             border: none;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.7rem;
+            padding: 0.1rem 0.3rem;
+            font-size: 0.6rem;
             font-weight: 500;
             color: #3a4b66;
             border-radius: 20px;
             cursor: pointer;
             transition: 0.1s;
+            white-space: nowrap;
         }
-        .lang-btn.active {
+        .lang-compact .lang-btn.active {
             background: #0b2b5c;
             color: white;
+        }
+        .lang-compact .lang-btn:hover {
+            background: #dce5f0;
+        }
+        .lang-compact .lang-btn.active:hover {
+            background: #0b2b5c;
         }
         .card {
             background: #ffffff;
             border-radius: 24px;
-            padding: 1.5rem 1.8rem;
+            padding: 1.2rem 1.5rem;
             box-shadow: 0 8px 24px rgba(0, 20, 40, 0.04);
-            margin-bottom: 1.8rem;
+            margin-bottom: 1.5rem;
             border: 1px solid rgba(0,0,0,0.02);
         }
         .card-title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.5rem;
             color: #0b2b5c;
         }
-        .card-title i {
-            color: #2a6bb0;
-        }
+        .card-title i { color: #2a6bb0; }
         .grid-2col {
             display: grid;
             grid-template-columns: 1.2fr 0.8fr;
-            gap: 1.8rem;
+            gap: 1.5rem;
         }
         @media (max-width: 800px) {
             .grid-2col { grid-template-columns: 1fr; }
         }
         .history-table-wrap {
-            max-height: 320px;
+            max-height: 280px;
             overflow-y: auto;
             border-radius: 16px;
             border: 1px solid #eef2f6;
@@ -150,11 +156,11 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         th {
             background: #f0f5fb;
-            padding: 0.7rem 0.3rem;
+            padding: 0.5rem 0.2rem;
             font-weight: 600;
             color: #1f3a5f;
             position: sticky;
@@ -162,192 +168,115 @@
             z-index: 5;
         }
         td {
-            padding: 0.5rem 0.3rem;
+            padding: 0.4rem 0.2rem;
             border-bottom: 1px solid #e6ecf3;
             text-align: center;
         }
         .digits {
             font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             font-weight: 600;
             color: #0f2b4f;
         }
         .badge-detail {
             background: #e2eaf3;
-            padding: 0.1rem 0.7rem;
+            padding: 0.1rem 0.6rem;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 500;
             color: #2e4d7a;
         }
         .recommend-box {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
+            gap: 1rem;
             justify-content: space-around;
-            margin-top: 0.5rem;
+            margin-top: 0.3rem;
         }
         .rec-item {
             background: #f6faff;
-            padding: 0.6rem 1.2rem;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
             border: 1px solid #dce5f0;
             font-weight: 600;
+            font-size: 0.85rem;
         }
-        .rec-item span {
-            color: #1f4b8a;
-        }
+        .rec-item span { color: #1f4b8a; }
         .tutorial-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.2rem;
-            margin-top: 0.8rem;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
         }
         .tutorial-card {
             background: #f9fcff;
-            border-radius: 20px;
-            padding: 1rem 1.2rem;
-            border-left: 5px solid #2a6bb0;
+            border-radius: 16px;
+            padding: 0.8rem 1rem;
+            border-left: 4px solid #2a6bb0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            transition: 0.1s;
         }
         .tutorial-card h4 {
-            font-size: 1rem;
-            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
             color: #0b2b5c;
         }
         .tutorial-card p {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #2b4b6e;
             opacity: 0.9;
             line-height: 1.5;
         }
         .tutorial-card ul {
-            margin-left: 1.2rem;
-            font-size: 0.82rem;
+            margin-left: 1rem;
+            font-size: 0.78rem;
             color: #1f3a5f;
-            line-height: 1.6;
+            line-height: 1.5;
         }
-        .tutorial-card ul li {
-            list-style-type: circle;
-        }
+        .tutorial-card ul li { list-style-type: circle; }
         .demo-box {
             background: #e6f0fa;
-            border-radius: 16px;
-            padding: 0.6rem 1.2rem;
-            margin-top: 0.6rem;
-            font-size: 0.85rem;
+            border-radius: 12px;
+            padding: 0.4rem 0.8rem;
+            margin-top: 0.4rem;
+            font-size: 0.8rem;
             font-weight: 500;
             color: #0f2b4f;
         }
-        .combo-box {
-            background: #edf3fa;
-            border-radius: 40px;
-            padding: 0.3rem 1rem;
-            display: inline-block;
-            font-weight: 600;
-            margin: 0.2rem 0;
-        }
-        .footer-contact {
-            text-align: center;
-            margin: 2.5rem 0 1rem;
-            color: #4b6589;
-            font-size: 0.95rem;
-            border-top: 1px solid #dee8f2;
-            padding-top: 2rem;
-        }
-        .footer-contact i {
-            color: #1e90ff;
-            margin: 0 4px;
-        }
-        .update-note {
-            background: #e6f0fa;
-            border-radius: 30px;
-            padding: 0.3rem 1.2rem;
-            font-size: 0.8rem;
-            display: inline-block;
-        }
-        .time-number {
-            font-weight: 700;
-            font-size: 1.2rem;
-            min-width: 40px;
-            display: inline-block;
-            text-align: center;
-        }
-        .text-muted {
-            color: #5b7395;
-        }
-        .mt-2 { margin-top: 0.8rem; }
-        .mt-1 { margin-top: 0.4rem; }
-        .border-highlight {
-            border-left-color: #f59e0b;
-        }
-        .border-6x {
-            border-left-color: #8b5cf6;
-        }
+        .border-highlight { border-left-color: #f59e0b; }
+        .border-6x { border-left-color: #8b5cf6; }
         .refresh-btn {
             background: #eaf1fc;
             border: 1px solid #cbdae9;
             border-radius: 30px;
-            padding: 0.2rem 1.2rem;
+            padding: 0.1rem 1rem;
             cursor: pointer;
             font-weight: 500;
-            font-size: 0.8rem;
-            transition: 0.1s;
+            font-size: 0.7rem;
             margin-left: 0.5rem;
         }
-        .refresh-btn:hover {
-            background: #d4e2f7;
-        }
-        .simulation-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem 1.2rem;
-            background: #f8fcff;
-            border-radius: 20px;
-            padding: 0.8rem 1.2rem;
-            margin-top: 0.5rem;
-        }
-        .sim-item {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dashed #dee8f2;
-            padding: 0.3rem 0;
-        }
-        .sim-item:last-child {
-            border-bottom: none;
-        }
-        .sim-label {
-            font-weight: 500;
-            color: #2a4b74;
-        }
-        .sim-value {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            color: #0f2b4f;
-        }
+        .refresh-btn:hover { background: #d4e2f7; }
         .selector-group {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 0.8rem 1.2rem;
+            gap: 0.5rem 1rem;
             background: #f2f8ff;
-            padding: 0.6rem 1.2rem;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.3rem;
         }
         .selector-group label {
             font-weight: 500;
             color: #1f3a5f;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         .selector-group select {
-            padding: 0.3rem 1.2rem 0.3rem 0.8rem;
+            padding: 0.2rem 1rem 0.2rem 0.6rem;
             border-radius: 30px;
             border: 1px solid #cbdae9;
             background: white;
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #0b2b5c;
             outline: none;
             cursor: pointer;
@@ -356,72 +285,96 @@
             background: #1e90ff;
             color: white;
             border: none;
-            padding: 0.3rem 1.2rem;
+            padding: 0.2rem 1rem;
             border-radius: 30px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: 0.15s;
         }
-        .selector-group .gen-btn:hover {
-            background: #0d6efd;
-        }
+        .selector-group .gen-btn:hover { background: #0d6efd; }
         .result-display {
             background: #e6f0fa;
-            border-radius: 20px;
-            padding: 0.8rem 1.2rem;
-            margin-top: 0.6rem;
-            font-size: 1.1rem;
+            border-radius: 16px;
+            padding: 0.6rem 1rem;
+            margin-top: 0.4rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #0f2b4f;
             text-align: center;
-            min-height: 3.5rem;
+            min-height: 3rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.3rem;
+            gap: 0.2rem;
         }
         .result-display .main-digits {
             font-family: 'Courier New', monospace;
-            font-size: 1.4rem;
-            letter-spacing: 2px;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
         }
         .result-display .detail-info {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 400;
             color: #3a5a7a;
             background: #dce8f5;
-            padding: 0.2rem 1.2rem;
+            padding: 0.1rem 1rem;
             border-radius: 30px;
         }
         .result-display .label-tag {
             background: #1f3a5f;
             color: white;
-            padding: 0.1rem 0.8rem;
+            padding: 0.1rem 0.6rem;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 400;
         }
-        /* 二码、三码特殊格式 */
         .format-example {
             background: #f0f5fb;
-            border-radius: 12px;
-            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            padding: 0.2rem 0.8rem;
             font-family: 'Courier New', monospace;
             font-weight: 600;
             color: #0b2b5c;
             display: inline-block;
-            margin: 0.2rem 0;
+            margin: 0.1rem 0;
         }
-        .tutorial-card .highlight-format {
-            background: #eaf3fc;
-            border-radius: 8px;
-            padding: 0.3rem 0.8rem;
-            font-weight: 600;
-            color: #1a4b7a;
-            display: inline-block;
+        .footer-contact {
+            text-align: center;
+            margin: 2rem 0 1rem;
+            color: #4b6589;
+            font-size: 0.85rem;
+            border-top: 1px solid #dee8f2;
+            padding-top: 1.5rem;
         }
+        .footer-contact i { color: #1e90ff; margin: 0 4px; }
+        .text-muted { color: #5b7395; font-size: 0.75rem; }
+        .mt-2 { margin-top: 0.6rem; }
+        .mt-1 { margin-top: 0.3rem; }
+        /* 语言切换面板 - 紧凑 */
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .lang-toggle .lang-btn {
+            background: transparent;
+            border: none;
+            padding: 0.1rem 0.3rem;
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: #3a4b66;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .lang-toggle .lang-btn.active {
+            background: #0b2b5c;
+            color: white;
+        }
+        .lang-toggle .lang-btn:hover { background: #dce5f0; }
+        .lang-toggle .lang-btn.active:hover { background: #0b2b5c; }
     </style>
 </head>
 <body>
@@ -439,7 +392,8 @@
             <button class="telegram-btn" onclick="window.open('https://t.me/AKMi520','_blank')">
                 <i class="fab fa-telegram-plane"></i> @AKMi520
             </button>
-            <div class="lang-selector" id="langSelector">
+            <!-- 紧凑语言切换 -->
+            <div class="lang-toggle" id="langToggle">
                 <button class="lang-btn active" data-lang="zh">中文</button>
                 <button class="lang-btn" data-lang="en">EN</button>
                 <button class="lang-btn" data-lang="es">ES</button>
@@ -462,7 +416,7 @@
 
     <!-- 主区域 -->
     <div class="grid-2col">
-        <!-- 左: 历史 + 智能推荐 + 模拟选号工具 -->
+        <!-- 左: 历史 + 智能推荐 + 模拟选号 -->
         <div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-database"></i> 历史数据 · 近30期</div>
@@ -472,9 +426,7 @@
                         <tbody id="historyBody"></tbody>
                     </table>
                 </div>
-                <div class="mt-2 text-muted" style="font-size:0.8rem;">
-                    <i class="fas fa-arrow-up"></i> 最新数据自动更新 (2026-07-22)
-                </div>
+                <div class="mt-2 text-muted"><i class="fas fa-arrow-up"></i> 最新数据自动更新 (2026-07-22)</div>
             </div>
 
             <div class="card">
@@ -487,20 +439,20 @@
                         <div class="rec-item">🎯 4×4×4×4 <span id="rec4x4">1-8-0-6</span></div>
                         <div class="rec-item">🎯 6×6×6×6 <span id="rec6x6">1-8-0-6-2-5</span></div>
                     </div>
-                    <div style="margin-top: 0.8rem; background: #eaf1fc; border-radius: 30px; padding: 0.3rem 1.2rem; display: inline-block; font-size:0.9rem;">
+                    <div style="margin-top:0.5rem; background:#eaf1fc; border-radius:30px; padding:0.2rem 1rem; display:inline-block; font-size:0.8rem;">
                         <i class="fas fa-robot"></i> 基于近期热码 & 走势
                     </div>
                 </div>
             </div>
 
-            <!-- 模拟选号工具 (自选打法) -->
+            <!-- 模拟选号工具 -->
             <div class="card">
                 <div class="card-title">
                     <i class="fas fa-dice"></i> 模拟选号 · 自选打法
-                    <button class="refresh-btn" onclick="generateRecommendations()"><i class="fas fa-sync-alt"></i> 刷新热码</button>
+                    <button class="refresh-btn" onclick="generateRecommendations()"><i class="fas fa-sync-alt"></i> 刷新</button>
                 </div>
                 <div class="selector-group">
-                    <label for="playTypeSelect"><i class="fas fa-hand-pointer"></i> 选择打法:</label>
+                    <label for="playTypeSelect"><i class="fas fa-hand-pointer"></i> 打法:</label>
                     <select id="playTypeSelect">
                         <option value="4">4码 (热号)</option>
                         <option value="3">3码 (前三位)</option>
@@ -514,9 +466,9 @@
                 <div id="customResult" class="result-display">
                     <span class="label-tag">4码</span>
                     <span class="main-digits">1 8 0 6</span>
-                    <span class="detail-info">共 4 个数字 · 万位:1 千位:8 百位:0 十位:6</span>
+                    <span class="detail-info">共4个数字 · 万:1 千:8 百:0 十:6</span>
                 </div>
-                <div style="margin-top:0.4rem; font-size:0.75rem; color:#4b6589; text-align:right;">
+                <div style="margin-top:0.3rem; font-size:0.7rem; color:#4b6589; text-align:right;">
                     <i class="fas fa-info-circle"></i> 基于近5期历史数据生成
                 </div>
             </div>
@@ -536,43 +488,48 @@
                     </div>
                     <!-- 二码详细 -->
                     <div class="tutorial-card">
-                        <h4>🔢 二码 (定位二码)</h4>
-                        <p>选取两位关键数字，组成二码组合。格式: <span class="highlight-format">56 *963</span> (表示万位5,6 和 千位9,6,3)</p>
+                        <h4>🔢 二码 · 定位二码</h4>
+                        <p>选取两位数字作为胆码，格式: <span class="format-example">×21×</span> 表示万位和千位组合。</p>
                         <ul>
-                            <li><strong>定位二码:</strong> 例 万位选 {5,6}，千位选 {9,6,3} → 组合 56*963</li>
+                            <li><strong>定位二码:</strong> 例 <span class="format-example">×21×</span> → 万位空, 千位2,1, 百位空, 十位空</li>
                             <li><strong>二码全包:</strong> 取两个位置，每个位置选2~4个号</li>
+                            <li><strong>实战:</strong> 若看好万位{0,6}，十位{1,8}，则写为 <span class="format-example">0 6 × × 1 8</span></li>
                         </ul>
-                        <div class="demo-box">⚡ 今日推荐二码: <strong>06 * 1 8 0</strong> (十位0,6 个位1,8,0)</div>
+                        <div class="demo-box">⚡ 今日推荐: <strong>×06×</strong> (千位0,6 百位空 十位空)</div>
                     </div>
                     <!-- 三码详细 -->
                     <div class="tutorial-card">
-                        <h4>🔢 三码 (前/后三)</h4>
-                        <p>选取前三位或后三位作为胆码。格式: <span class="highlight-format">56 *963 * 2</span> (万5,6 千9,6,3 百2)</p>
+                        <h4>🔢 三码 · 前/后三</h4>
+                        <p>选取前三位或后三位作为胆码，格式: <span class="format-example">×569</span> 或 <span class="format-example">569×</span></p>
                         <ul>
-                            <li><strong>前三位:</strong> 万·千·百</li>
-                            <li><strong>后三位:</strong> 百·十·个</li>
+                            <li><strong>前三位:</strong> 万·千·百 → 如 <span class="format-example">×569</span> (千5,6,9 百5,6,9 十空)</li>
+                            <li><strong>后三位:</strong> 百·十·个 → 如 <span class="format-example">569×</span> (百5,6,9 十5,6,9 个空)</li>
+                            <li><strong>定位三码:</strong> 可指定任意三位组合</li>
                         </ul>
-                        <div class="demo-box">📌 今日推荐三码: <strong>1 8 0</strong> (万位1,8,0 千位8,0 百位0)</div>
+                        <div class="demo-box">📌 今日推荐: <strong>×180</strong> (万位空, 千1,8,0 百1,8,0)</div>
                     </div>
-                    <!-- 4码、4x4、6x6 保留 -->
+                    <!-- 4码 -->
                     <div class="tutorial-card">
                         <h4>🔢 打4码 (定位胆)</h4>
                         <p>从每位选4个胆码，组成4×4×4×4=256注。</p>
                         <ul><li>例: 万位 {1,8,0,6}</li><li>千位 {2,5,7,9}</li><li>百位 {3,6,8,0}</li><li>十位 {4,7,2,1}</li></ul>
                         <div class="demo-box">✅ 覆盖广，适合稳健型。</div>
                     </div>
+                    <!-- 4x4 -->
                     <div class="tutorial-card border-highlight">
                         <h4>🧩 4×4×4×4 复式</h4>
                         <p>每位选4个号，共4^4=256注。 例:</p>
                         <ul><li>万位: 1,8,0,6</li><li>千位: 2,5,7,9</li><li>百位: 3,6,8,0</li><li>十位: 4,7,2,1</li></ul>
                         <div class="demo-box">💰 投入256注，中奖概率大幅提升。</div>
                     </div>
+                    <!-- 6x6 -->
                     <div class="tutorial-card border-6x">
-                        <h4>🧩 6×6×6×6 复式 (大底覆盖)</h4>
+                        <h4>🧩 6×6×6×6 复式</h4>
                         <p>每位选6个号，共6^4=1296注。</p>
                         <ul><li><strong>选号策略:</strong> 取近期每位出现频率前6的数字</li><li><strong>示例:</strong> 万位 {1,8,0,6,2,5} · 千位 {3,7,9,4,1,0}</li></ul>
                         <div class="demo-box">🔥 容错率高，适合追热号。</div>
                     </div>
+                    <!-- 策略综合 -->
                     <div class="tutorial-card">
                         <h4>📊 实战策略组合</h4>
                         <p>结合遗漏、和值、跨度。 每日更新推荐。</p>
@@ -580,20 +537,36 @@
                         <div class="demo-box">🔥 今日重点: 热号 0,8,6</div>
                     </div>
                 </div>
-                <div style="margin-top:1rem; background:#f0f5fe; border-radius: 60px; padding: 0.3rem 1.2rem; display: inline-block;">
+                <div style="margin-top:0.8rem; background:#f0f5fe; border-radius:60px; padding:0.2rem 1rem; display:inline-block; font-size:0.8rem;">
                     <i class="fas fa-headset"></i> 客服 Telegram: @AKMi520
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 多语言占位 -->
-    <div class="card" id="languageMessageCard" style="background: #f2f8ff;">
-        <div class="card-title"><i class="fas fa-globe"></i> <span id="langTitle">中文 / 多语言支持</span></div>
-        <div id="langContent" style="font-size:0.95rem; display:flex; flex-wrap:wrap; gap:0.8rem;">
-            <span class="badge-detail">🇨🇳 中文</span><span class="badge-detail">🇬🇧 English</span><span class="badge-detail">🇪🇸 Español</span><span class="badge-detail">🇹🇷 Türkçe</span><span class="badge-detail">🇮🇹 Italiano</span><span class="badge-detail">🇮🇳 हिंदी</span><span class="badge-detail">🇰🇷 한국어</span><span class="badge-detail">🇯🇵 日本語</span><span class="badge-detail">🇻🇳 Tiếng Việt</span><span class="badge-detail">🇹🇭 ไทย</span><span class="badge-detail">🇫🇷 Français</span><span class="badge-detail">🇩🇪 Deutsch</span><span class="badge-detail">🇷🇺 Русский</span><span class="badge-detail">🇵🇹 Português</span><span class="badge-detail">🇸🇦 العربية</span>
+    <!-- 多语言占位 (简化) -->
+    <div class="card" id="languageMessageCard" style="background: #f2f8ff; padding:0.6rem 1.2rem;">
+        <div style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem; font-size:0.8rem;">
+            <i class="fas fa-globe"></i> <span id="langTitle">中文 / 多语言支持</span>
+            <span id="langContent" style="display:flex; flex-wrap:wrap; gap:0.3rem;">
+                <span class="badge-detail">🇨🇳 中文</span>
+                <span class="badge-detail">🇬🇧 English</span>
+                <span class="badge-detail">🇪🇸 Español</span>
+                <span class="badge-detail">🇹🇷 Türkçe</span>
+                <span class="badge-detail">🇮🇹 Italiano</span>
+                <span class="badge-detail">🇮🇳 हिंदी</span>
+                <span class="badge-detail">🇰🇷 한국어</span>
+                <span class="badge-detail">🇯🇵 日本語</span>
+                <span class="badge-detail">🇻🇳 Tiếng Việt</span>
+                <span class="badge-detail">🇹🇭 ไทย</span>
+                <span class="badge-detail">🇫🇷 Français</span>
+                <span class="badge-detail">🇩🇪 Deutsch</span>
+                <span class="badge-detail">🇷🇺 Русский</span>
+                <span class="badge-detail">🇵🇹 Português</span>
+                <span class="badge-detail">🇸🇦 العربية</span>
+            </span>
+            <span style="color:#2d4d78; font-size:0.7rem;"><i class="fas fa-info-circle"></i> 当前: <span id="currentLangLabel">中文</span></span>
         </div>
-        <div style="margin-top:0.4rem; color:#2d4d78;"><i class="fas fa-info-circle"></i> 当前界面语言: <span id="currentLangLabel">中文</span></div>
     </div>
 
     <div class="footer-contact">
@@ -674,7 +647,6 @@
             return posFreq.map(arr => topN(arr, n));
         }
 
-        // 生成推荐 (同时更新智能推荐和自定义结果)
         function generateRecommendations() {
             if (history.length < 5) return;
             const recent = history.slice(0, 5);
@@ -697,12 +669,10 @@
             document.getElementById('rec4x4').innerText = str4x4;
             document.getElementById('rec6x6').innerText = str6x6;
 
-            // 更新自选结果 (根据当前select值)
             const select = document.getElementById('playTypeSelect');
             if (select) updateCustomResult(select.value);
         }
 
-        // 自选打法生成 - 详细显示组数及每位数字
         function updateCustomResult(playType) {
             if (history.length < 5) return;
             const recent = history.slice(0, 5);
@@ -715,22 +685,21 @@
                 '6x6': '6×6×6×6',
                 '5': '直选5码'
             };
-            let mainHtml = '';
-            let detailHtml = '';
+            let mainHtml = '', detailHtml = '';
             let label = labelMap[playType] || '组合';
 
             if (playType === '4') {
                 const top = topN(allDigits, 4);
                 mainHtml = top.join(' ');
-                detailHtml = `共 4 个数字 · 万位:${top[0]||''} 千位:${top[1]||''} 百位:${top[2]||''} 十位:${top[3]||''}`;
+                detailHtml = `共4个数字 · 万:${top[0]||''} 千:${top[1]||''} 百:${top[2]||''} 十:${top[3]||''}`;
             } else if (playType === '3') {
                 const top = topN(allDigits, 3);
                 mainHtml = top.join(' ');
-                detailHtml = `共 3 个数字 · 万位:${top[0]||''} 千位:${top[1]||''} 百位:${top[2]||''}`;
+                detailHtml = `共3个数字 · 万:${top[0]||''} 千:${top[1]||''} 百:${top[2]||''}`;
             } else if (playType === '2') {
                 const top = topN(allDigits, 2);
                 mainHtml = top.join(' ');
-                detailHtml = `共 2 个数字 · 万位:${top[0]||''} 千位:${top[1]||''}`;
+                detailHtml = `共2个数字 · 万:${top[0]||''} 千:${top[1]||''}`;
             } else if (playType === '4x4') {
                 const pos = posTopN(recent, 4);
                 mainHtml = pos.map(p => p.join('')).join(' - ');
@@ -742,7 +711,7 @@
             } else if (playType === '5') {
                 const top = topN(allDigits, 5);
                 mainHtml = top.join(' ');
-                detailHtml = `共 5 个数字 · 万:${top[0]||''} 千:${top[1]||''} 百:${top[2]||''} 十:${top[3]||''} 个:${top[4]||''}`;
+                detailHtml = `共5个数字 · 万:${top[0]||''} 千:${top[1]||''} 百:${top[2]||''} 十:${top[3]||''} 个:${top[4]||''}`;
             }
 
             document.getElementById('customResult').innerHTML = `
@@ -772,22 +741,23 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // 多语言
+        // 多语言切换 (紧凑)
         const langMap = {
             'zh': '中文', 'en': 'English', 'es': 'Español', 'tr': 'Türkçe', 'la': 'Latina',
             'it': 'Italiano', 'hi': 'हिंदी', 'ko': '한국어', 'ja': '日本語', 'vi': 'Tiếng Việt',
             'th': 'ไทย', 'fr': 'Français', 'de': 'Deutsch', 'ru': 'Русский', 'pt': 'Português',
             'ar': 'العربية'
         };
-        const langBtns = document.querySelectorAll('.lang-btn');
+        const langBtns = document.querySelectorAll('.lang-toggle .lang-btn');
         langBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 langBtns.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 const lang = this.dataset.lang;
                 document.getElementById('currentLangLabel').innerText = langMap[lang] || lang;
-                document.getElementById('langTitle').innerHTML = `<i class="fas fa-globe"></i> ${langMap[lang] || lang} / 多语言`;
-                document.getElementById('langContent').innerHTML = `<span class="badge-detail">${langMap[lang] || lang}</span> 已切换 · 教程内容保持不变 (演示)`;
+                document.getElementById('langTitle').innerHTML = `${langMap[lang] || lang} / 多语言`;
+                // 简化内容显示
+                document.getElementById('langContent').innerHTML = `<span class="badge-detail">${langMap[lang] || lang}</span> 已切换 (演示)`;
             });
         });
 
