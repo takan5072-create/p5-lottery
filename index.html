@@ -416,17 +416,17 @@
                         </ul>
                         <div class="demo-box">💰 投入256注，中奖概率大幅提升。</div>
                     </div>
-                    <!-- 6×6×6×6 新增 -->
+                    <!-- 6×6×6×6 新增详细教程 -->
                     <div class="tutorial-card border-6x">
-                        <h4>🧩 6×6×6×6 复式</h4>
-                        <p>每位选6个号，共6^4=1296注。 适合大底覆盖。</p>
+                        <h4>🧩 6×6×6×6 复式 (大底覆盖)</h4>
+                        <p>每位选6个号，共6^4=1296注。 适合追热号、容错高。</p>
                         <ul>
-                            <li>万位: 1,8,0,6,2,5</li>
-                            <li>千位: 3,7,9,4,1,0</li>
-                            <li>百位: 6,8,2,5,7,3</li>
-                            <li>十位: 0,4,9,1,6,8</li>
+                            <li><strong>选号策略:</strong> 取近期每位出现频率前6的数字</li>
+                            <li><strong>示例:</strong> 万位 {1,8,0,6,2,5} · 千位 {3,7,9,4,1,0}</li>
+                            <li><strong>百位</strong> {6,8,2,5,7,3} · <strong>十位</strong> {0,4,9,1,6,8}</li>
+                            <li><strong>优势:</strong> 覆盖绝大多数热号，适合长期追号</li>
                         </ul>
-                        <div class="demo-box">🔥 容错率高，适合追热号。</div>
+                        <div class="demo-box">🔥 今日推荐6×6×6×6: 每位取前6热号，详见左侧推荐区</div>
                     </div>
                     <!-- 策略综合 -->
                     <div class="tutorial-card">
@@ -544,7 +544,7 @@
             const top4 = topN(allDigits, 4);
             const top3 = topN(allDigits, 3);
             const top2 = topN(allDigits, 2);
-            const top6 = topN(allDigits, 6); // 新增6码
+            const top6 = topN(allDigits, 6);
 
             // 4x4x4x4 每位取top4
             const posFreq = [[],[],[],[]];
