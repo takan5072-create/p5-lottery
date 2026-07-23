@@ -23,6 +23,7 @@
             max-width: 1400px;
             margin: 0 auto;
         }
+        /* header */
         .header {
             display: flex;
             flex-wrap: wrap;
@@ -82,45 +83,74 @@
             gap: 5px;
             box-shadow: 0 4px 8px rgba(30, 144, 255, 0.2);
         }
-        .telegram-btn:hover {
-            background: #0d6efd;
-            transform: scale(1.01);
+        .telegram-btn:hover { background: #0d6efd; transform: scale(1.01); }
+        /* 语言下拉 */
+        .lang-dropdown {
+            position: relative;
+            display: inline-block;
         }
-        /* 紧凑语言切换 */
-        .lang-compact {
+        .lang-dropdown .lang-btn {
+            background: white;
+            border: 1px solid #dce5f0;
+            border-radius: 40px;
+            padding: 0.3rem 1rem 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1a2639;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.2rem;
-            background: white;
-            padding: 0.1rem 0.4rem;
-            border-radius: 40px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            border: 1px solid #e6ecf3;
-            flex-wrap: wrap;
-            max-width: 300px;
+            gap: 4px;
+            transition: 0.15s;
         }
-        .lang-compact .lang-btn {
+        .lang-dropdown .lang-btn:hover {
+            background: #f0f5fb;
+        }
+        .lang-dropdown .lang-btn i { font-size: 0.8rem; color: #2a6bb0; }
+        .lang-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 110%;
+            background: white;
+            min-width: 140px;
+            max-height: 280px;
+            overflow-y: auto;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border: 1px solid #eef2f6;
+            padding: 0.4rem 0;
+            z-index: 100;
+        }
+        .lang-dropdown-content.show {
+            display: block;
+        }
+        .lang-dropdown-content .lang-item {
             background: transparent;
             border: none;
-            padding: 0.1rem 0.3rem;
-            font-size: 0.6rem;
+            padding: 0.4rem 1.2rem;
+            width: 100%;
+            text-align: left;
+            font-size: 0.8rem;
             font-weight: 500;
-            color: #3a4b66;
-            border-radius: 20px;
+            color: #1a2639;
             cursor: pointer;
             transition: 0.1s;
-            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .lang-compact .lang-btn.active {
+        .lang-dropdown-content .lang-item:hover {
+            background: #eaf1fc;
+        }
+        .lang-dropdown-content .lang-item.active {
             background: #0b2b5c;
             color: white;
         }
-        .lang-compact .lang-btn:hover {
-            background: #dce5f0;
+        .lang-dropdown-content .lang-item .flag {
+            font-size: 0.9rem;
         }
-        .lang-compact .lang-btn.active:hover {
-            background: #0b2b5c;
-        }
+        /* cards */
         .card {
             background: #ffffff;
             border-radius: 24px;
@@ -352,29 +382,15 @@
         .text-muted { color: #5b7395; font-size: 0.75rem; }
         .mt-2 { margin-top: 0.6rem; }
         .mt-1 { margin-top: 0.3rem; }
-        /* 语言切换面板 - 紧凑 */
-        .lang-toggle {
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
+        /* 语言状态条 */
+        .lang-status {
+            background: #f2f8ff;
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            display: inline-block;
+            font-size: 0.7rem;
+            color: #2d4d78;
         }
-        .lang-toggle .lang-btn {
-            background: transparent;
-            border: none;
-            padding: 0.1rem 0.3rem;
-            font-size: 0.55rem;
-            font-weight: 500;
-            color: #3a4b66;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .lang-toggle .lang-btn.active {
-            background: #0b2b5c;
-            color: white;
-        }
-        .lang-toggle .lang-btn:hover { background: #dce5f0; }
-        .lang-toggle .lang-btn.active:hover { background: #0b2b5c; }
     </style>
 </head>
 <body>
@@ -392,31 +408,21 @@
             <button class="telegram-btn" onclick="window.open('https://t.me/AKMi520','_blank')">
                 <i class="fab fa-telegram-plane"></i> @AKMi520
             </button>
-            <!-- 紧凑语言切换 -->
-            <div class="lang-toggle" id="langToggle">
-                <button class="lang-btn active" data-lang="zh">中文</button>
-                <button class="lang-btn" data-lang="en">EN</button>
-                <button class="lang-btn" data-lang="es">ES</button>
-                <button class="lang-btn" data-lang="tr">TR</button>
-                <button class="lang-btn" data-lang="la">LA</button>
-                <button class="lang-btn" data-lang="it">IT</button>
-                <button class="lang-btn" data-lang="hi">HI</button>
-                <button class="lang-btn" data-lang="ko">KO</button>
-                <button class="lang-btn" data-lang="ja">JA</button>
-                <button class="lang-btn" data-lang="vi">VI</button>
-                <button class="lang-btn" data-lang="th">TH</button>
-                <button class="lang-btn" data-lang="fr">FR</button>
-                <button class="lang-btn" data-lang="de">DE</button>
-                <button class="lang-btn" data-lang="ru">RU</button>
-                <button class="lang-btn" data-lang="pt">PT</button>
-                <button class="lang-btn" data-lang="ar">AR</button>
+            <!-- 语言下拉 -->
+            <div class="lang-dropdown">
+                <button class="lang-btn" id="langToggleBtn">
+                    <i class="fas fa-globe"></i> 语言 <i class="fas fa-chevron-down" style="font-size:0.6rem;margin-left:4px;"></i>
+                </button>
+                <div class="lang-dropdown-content" id="langDropdownContent">
+                    <!-- 由 JS 动态生成 -->
+                </div>
             </div>
         </div>
     </div>
 
     <!-- 主区域 -->
     <div class="grid-2col">
-        <!-- 左: 历史 + 智能推荐 + 模拟选号 -->
+        <!-- 左列 -->
         <div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-database"></i> 历史数据 · 近30期</div>
@@ -445,7 +451,7 @@
                 </div>
             </div>
 
-            <!-- 模拟选号工具 -->
+            <!-- 模拟选号 -->
             <div class="card">
                 <div class="card-title">
                     <i class="fas fa-dice"></i> 模拟选号 · 自选打法
@@ -474,19 +480,17 @@
             </div>
         </div>
 
-        <!-- 右: 详细教程 -->
+        <!-- 右列: 教程 -->
         <div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-chalkboard-teacher"></i> 师傅教 · 详细规律打法</div>
-                <div class="tutorial-grid" id="tutorialGrid">
-                    <!-- 画规律 -->
+                <div class="tutorial-grid">
                     <div class="tutorial-card">
                         <h4>📐 画规律 · 走势</h4>
                         <p>统计每一位数字出现频率，标记热号(红)、冷号(蓝)。</p>
                         <ul><li>热号: 近10期出现≥4次</li><li>温号: 2~3次</li><li>冷号: 0~1次</li></ul>
                         <div class="demo-box">📌 实战: 若百位热号 [1,8,0]，则优先考虑。</div>
                     </div>
-                    <!-- 二码详细 -->
                     <div class="tutorial-card">
                         <h4>🔢 二码 · 定位二码</h4>
                         <p>选取两位数字作为胆码，格式: <span class="format-example">×21×</span> 表示万位和千位组合。</p>
@@ -497,7 +501,6 @@
                         </ul>
                         <div class="demo-box">⚡ 今日推荐: <strong>×06×</strong> (千位0,6 百位空 十位空)</div>
                     </div>
-                    <!-- 三码详细 -->
                     <div class="tutorial-card">
                         <h4>🔢 三码 · 前/后三</h4>
                         <p>选取前三位或后三位作为胆码，格式: <span class="format-example">×569</span> 或 <span class="format-example">569×</span></p>
@@ -508,28 +511,24 @@
                         </ul>
                         <div class="demo-box">📌 今日推荐: <strong>×180</strong> (万位空, 千1,8,0 百1,8,0)</div>
                     </div>
-                    <!-- 4码 -->
                     <div class="tutorial-card">
                         <h4>🔢 打4码 (定位胆)</h4>
                         <p>从每位选4个胆码，组成4×4×4×4=256注。</p>
                         <ul><li>例: 万位 {1,8,0,6}</li><li>千位 {2,5,7,9}</li><li>百位 {3,6,8,0}</li><li>十位 {4,7,2,1}</li></ul>
                         <div class="demo-box">✅ 覆盖广，适合稳健型。</div>
                     </div>
-                    <!-- 4x4 -->
                     <div class="tutorial-card border-highlight">
                         <h4>🧩 4×4×4×4 复式</h4>
                         <p>每位选4个号，共4^4=256注。 例:</p>
                         <ul><li>万位: 1,8,0,6</li><li>千位: 2,5,7,9</li><li>百位: 3,6,8,0</li><li>十位: 4,7,2,1</li></ul>
                         <div class="demo-box">💰 投入256注，中奖概率大幅提升。</div>
                     </div>
-                    <!-- 6x6 -->
                     <div class="tutorial-card border-6x">
                         <h4>🧩 6×6×6×6 复式</h4>
                         <p>每位选6个号，共6^4=1296注。</p>
                         <ul><li><strong>选号策略:</strong> 取近期每位出现频率前6的数字</li><li><strong>示例:</strong> 万位 {1,8,0,6,2,5} · 千位 {3,7,9,4,1,0}</li></ul>
                         <div class="demo-box">🔥 容错率高，适合追热号。</div>
                     </div>
-                    <!-- 策略综合 -->
                     <div class="tutorial-card">
                         <h4>📊 实战策略组合</h4>
                         <p>结合遗漏、和值、跨度。 每日更新推荐。</p>
@@ -544,28 +543,11 @@
         </div>
     </div>
 
-    <!-- 多语言占位 (简化) -->
-    <div class="card" id="languageMessageCard" style="background: #f2f8ff; padding:0.6rem 1.2rem;">
+    <!-- 语言状态 -->
+    <div class="card" style="background:#f2f8ff; padding:0.4rem 1.2rem;">
         <div style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem; font-size:0.8rem;">
-            <i class="fas fa-globe"></i> <span id="langTitle">中文 / 多语言支持</span>
-            <span id="langContent" style="display:flex; flex-wrap:wrap; gap:0.3rem;">
-                <span class="badge-detail">🇨🇳 中文</span>
-                <span class="badge-detail">🇬🇧 English</span>
-                <span class="badge-detail">🇪🇸 Español</span>
-                <span class="badge-detail">🇹🇷 Türkçe</span>
-                <span class="badge-detail">🇮🇹 Italiano</span>
-                <span class="badge-detail">🇮🇳 हिंदी</span>
-                <span class="badge-detail">🇰🇷 한국어</span>
-                <span class="badge-detail">🇯🇵 日本語</span>
-                <span class="badge-detail">🇻🇳 Tiếng Việt</span>
-                <span class="badge-detail">🇹🇭 ไทย</span>
-                <span class="badge-detail">🇫🇷 Français</span>
-                <span class="badge-detail">🇩🇪 Deutsch</span>
-                <span class="badge-detail">🇷🇺 Русский</span>
-                <span class="badge-detail">🇵🇹 Português</span>
-                <span class="badge-detail">🇸🇦 العربية</span>
-            </span>
-            <span style="color:#2d4d78; font-size:0.7rem;"><i class="fas fa-info-circle"></i> 当前: <span id="currentLangLabel">中文</span></span>
+            <i class="fas fa-globe"></i> <span id="langStatusLabel">当前语言: 中文</span>
+            <span class="lang-status" id="langStatusBadge">🌐 中文</span>
         </div>
     </div>
 
@@ -615,6 +597,81 @@
             return { date: parts[0], issue: parts[1], digits: parts[2].trim().split(' '), detail: '详细' };
         });
 
+        // ---------- 语言配置 ----------
+        const languages = [
+            { code: 'zh', label: '中文', flag: '🇨🇳' },
+            { code: 'en', label: 'English', flag: '🇬🇧' },
+            { code: 'es', label: 'Español', flag: '🇪🇸' },
+            { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
+            { code: 'la', label: 'Latina', flag: '🇻🇦' },
+            { code: 'it', label: 'Italiano', flag: '🇮🇹' },
+            { code: 'hi', label: 'हिंदी', flag: '🇮🇳' },
+            { code: 'ko', label: '한국어', flag: '🇰🇷' },
+            { code: 'ja', label: '日本語', flag: '🇯🇵' },
+            { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' },
+            { code: 'th', label: 'ไทย', flag: '🇹🇭' },
+            { code: 'fr', label: 'Français', flag: '🇫🇷' },
+            { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+            { code: 'ru', label: 'Русский', flag: '🇷🇺' },
+            { code: 'pt', label: 'Português', flag: '🇵🇹' },
+            { code: 'ar', label: 'العربية', flag: '🇸🇦' }
+        ];
+
+        let currentLang = 'zh';
+
+        // 渲染语言下拉
+        function renderLangDropdown() {
+            const container = document.getElementById('langDropdownContent');
+            container.innerHTML = '';
+            languages.forEach(lang => {
+                const btn = document.createElement('button');
+                btn.className = `lang-item ${lang.code === currentLang ? 'active' : ''}`;
+                btn.innerHTML = `<span class="flag">${lang.flag}</span> ${lang.label}`;
+                btn.dataset.lang = lang.code;
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    switchLanguage(lang.code);
+                    document.getElementById('langDropdownContent').classList.remove('show');
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        // 切换语言
+        function switchLanguage(code) {
+            currentLang = code;
+            const langObj = languages.find(l => l.code === code);
+            // 更新状态显示
+            document.getElementById('langStatusLabel').innerText = `当前语言: ${langObj ? langObj.label : code}`;
+            document.getElementById('langStatusBadge').innerHTML = `${langObj ? langObj.flag : '🌐'} ${langObj ? langObj.label : code}`;
+            // 更新下拉按钮文字
+            document.querySelector('.lang-btn#langToggleBtn').innerHTML = 
+                `<i class="fas fa-globe"></i> ${langObj ? langObj.label : '语言'} <i class="fas fa-chevron-down" style="font-size:0.6rem;margin-left:4px;"></i>`;
+            // 高亮下拉项
+            document.querySelectorAll('.lang-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.lang === code);
+            });
+            // 实际项目可在此处加载对应语言包，此处仅做演示
+            console.log('切换语言至:', code);
+        }
+
+        // 下拉开关
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('langToggleBtn');
+            const dropdown = document.getElementById('langDropdownContent');
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', function() {
+                dropdown.classList.remove('show');
+            });
+            // 初始化
+            renderLangDropdown();
+            switchLanguage('zh');
+        });
+
+        // ---------- 核心功能 ----------
         function renderHistory() {
             const tbody = document.getElementById('historyBody');
             tbody.innerHTML = '';
@@ -741,26 +798,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // 多语言切换 (紧凑)
-        const langMap = {
-            'zh': '中文', 'en': 'English', 'es': 'Español', 'tr': 'Türkçe', 'la': 'Latina',
-            'it': 'Italiano', 'hi': 'हिंदी', 'ko': '한국어', 'ja': '日本語', 'vi': 'Tiếng Việt',
-            'th': 'ไทย', 'fr': 'Français', 'de': 'Deutsch', 'ru': 'Русский', 'pt': 'Português',
-            'ar': 'العربية'
-        };
-        const langBtns = document.querySelectorAll('.lang-toggle .lang-btn');
-        langBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                langBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const lang = this.dataset.lang;
-                document.getElementById('currentLangLabel').innerText = langMap[lang] || lang;
-                document.getElementById('langTitle').innerHTML = `${langMap[lang] || lang} / 多语言`;
-                // 简化内容显示
-                document.getElementById('langContent').innerHTML = `<span class="badge-detail">${langMap[lang] || lang}</span> 已切换 (演示)`;
-            });
-        });
-
+        // 初始化
         renderHistory();
         generateRecommendations();
         window.generateRecommendations = generateRecommendations;
