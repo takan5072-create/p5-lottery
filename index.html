@@ -197,7 +197,6 @@
         .rec-item span {
             color: #1f4b8a;
         }
-        /* 详细教程卡片 */
         .tutorial-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -283,6 +282,9 @@
         .border-highlight {
             border-left-color: #f59e0b;
         }
+        .border-6x {
+            border-left-color: #8b5cf6;
+        }
     </style>
 </head>
 <body>
@@ -346,6 +348,7 @@
                         <div class="rec-item">🎯 3码 <span id="rec3">8 0 6</span></div>
                         <div class="rec-item">🎯 2码 <span id="rec2">0 6</span></div>
                         <div class="rec-item">🎯 4×4×4×4 <span id="rec4x4">1-8-0-6</span></div>
+                        <div class="rec-item">🎯 6×6×6×6 <span id="rec6x6">1-8-0-6-2-5</span></div>
                     </div>
                     <div style="margin-top: 0.8rem; background: #eaf1fc; border-radius: 30px; padding: 0.3rem 1.2rem; display: inline-block; font-size:0.9rem;">
                         <i class="fas fa-robot"></i> 基于近期热码 & 走势
@@ -412,6 +415,18 @@
                             <li>十位: 4,7,2,1</li>
                         </ul>
                         <div class="demo-box">💰 投入256注，中奖概率大幅提升。</div>
+                    </div>
+                    <!-- 6×6×6×6 新增 -->
+                    <div class="tutorial-card border-6x">
+                        <h4>🧩 6×6×6×6 复式</h4>
+                        <p>每位选6个号，共6^4=1296注。 适合大底覆盖。</p>
+                        <ul>
+                            <li>万位: 1,8,0,6,2,5</li>
+                            <li>千位: 3,7,9,4,1,0</li>
+                            <li>百位: 6,8,2,5,7,3</li>
+                            <li>十位: 0,4,9,1,6,8</li>
+                        </ul>
+                        <div class="demo-box">🔥 容错率高，适合追热号。</div>
                     </div>
                     <!-- 策略综合 -->
                     <div class="tutorial-card">
@@ -529,6 +544,8 @@
             const top4 = topN(allDigits, 4);
             const top3 = topN(allDigits, 3);
             const top2 = topN(allDigits, 2);
+            const top6 = topN(allDigits, 6); // 新增6码
+
             // 4x4x4x4 每位取top4
             const posFreq = [[],[],[],[]];
             recent.forEach(item => {
@@ -536,13 +553,18 @@
                     posFreq[idx].push(parseInt(d));
                 });
             });
-            const posTop = posFreq.map(arr => topN(arr, 4));
-            const str4x4 = posTop.map(p => p.join('')).join('-');
+            const posTop4 = posFreq.map(arr => topN(arr, 4));
+            const str4x4 = posTop4.map(p => p.join('')).join('-');
+
+            // 6x6x6x6 每位取top6
+            const posTop6 = posFreq.map(arr => topN(arr, 6));
+            const str6x6 = posTop6.map(p => p.join('')).join('-');
 
             document.getElementById('rec4').innerText = top4.join(' ');
             document.getElementById('rec3').innerText = top3.join(' ');
             document.getElementById('rec2').innerText = top2.join(' ');
             document.getElementById('rec4x4').innerText = str4x4;
+            document.getElementById('rec6x6').innerText = str6x6;
         }
 
         // ------- 倒计时 21:30 -------
