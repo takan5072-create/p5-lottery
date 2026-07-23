@@ -294,6 +294,7 @@
             font-weight: 500;
             font-size: 0.8rem;
             transition: 0.1s;
+            margin-left: 0.5rem;
         }
         .refresh-btn:hover {
             background: #d4e2f7;
@@ -324,6 +325,72 @@
             font-family: 'Courier New', monospace;
             font-weight: 600;
             color: #0f2b4f;
+        }
+        /* 自定义选择器 */
+        .selector-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.8rem 1.2rem;
+            background: #f2f8ff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            margin-bottom: 0.4rem;
+        }
+        .selector-group label {
+            font-weight: 500;
+            color: #1f3a5f;
+            font-size: 0.9rem;
+        }
+        .selector-group select {
+            padding: 0.3rem 1.2rem 0.3rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid #cbdae9;
+            background: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #0b2b5c;
+            outline: none;
+            cursor: pointer;
+        }
+        .selector-group .gen-btn {
+            background: #1e90ff;
+            color: white;
+            border: none;
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .selector-group .gen-btn:hover {
+            background: #0d6efd;
+        }
+        .result-display {
+            background: #e6f0fa;
+            border-radius: 20px;
+            padding: 0.8rem 1.2rem;
+            margin-top: 0.6rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #0f2b4f;
+            text-align: center;
+            letter-spacing: 2px;
+            min-height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.3rem 0.8rem;
+        }
+        .result-display .label-tag {
+            background: #1f3a5f;
+            color: white;
+            padding: 0.1rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 400;
         }
     </style>
 </head>
@@ -365,7 +432,7 @@
 
     <!-- 主区域 -->
     <div class="grid-2col">
-        <!-- 左: 历史 + 推荐 + 模拟选号 -->
+        <!-- 左: 历史 + 智能推荐 + 模拟选号工具 -->
         <div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-database"></i> 历史数据 · 近30期</div>
@@ -380,108 +447,95 @@
                 </div>
             </div>
 
-            <!-- 模拟选号推荐 (独立卡片) -->
+            <!-- 智能推荐 (原有) -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-bullseye"></i> 智能推荐 · 今日组合</div>
+                <div id="recommendationContainer">
+                    <div class="recommend-box">
+                        <div class="rec-item">🎯 4码 <span id="rec4">1 8 0 6</span></div>
+                        <div class="rec-item">🎯 3码 <span id="rec3">8 0 6</span></div>
+                        <div class="rec-item">🎯 2码 <span id="rec2">0 6</span></div>
+                        <div class="rec-item">🎯 4×4×4×4 <span id="rec4x4">1-8-0-6</span></div>
+                        <div class="rec-item">🎯 6×6×6×6 <span id="rec6x6">1-8-0-6-2-5</span></div>
+                    </div>
+                    <div style="margin-top: 0.8rem; background: #eaf1fc; border-radius: 30px; padding: 0.3rem 1.2rem; display: inline-block; font-size:0.9rem;">
+                        <i class="fas fa-robot"></i> 基于近期热码 & 走势
+                    </div>
+                </div>
+            </div>
+
+            <!-- 模拟选号工具 (新增交互) -->
             <div class="card">
                 <div class="card-title">
-                    <i class="fas fa-dice"></i> 模拟选号 · 智能推荐
-                    <button class="refresh-btn" onclick="generateRecommendations()"><i class="fas fa-sync-alt"></i> 刷新</button>
+                    <i class="fas fa-dice"></i> 模拟选号 · 自选打法
+                    <button class="refresh-btn" onclick="generateRecommendations()"><i class="fas fa-sync-alt"></i> 刷新热码</button>
                 </div>
-                <div id="simulationContainer">
-                    <div class="simulation-grid" id="simGrid">
-                        <div class="sim-item"><span class="sim-label">🎯 4码 (热号)</span><span class="sim-value" id="sim4">1 8 0 6</span></div>
-                        <div class="sim-item"><span class="sim-label">🎯 3码 (前三位)</span><span class="sim-value" id="sim3">8 0 6</span></div>
-                        <div class="sim-item"><span class="sim-label">🎯 2码 (核心)</span><span class="sim-value" id="sim2">0 6</span></div>
-                        <div class="sim-item"><span class="sim-label">🧩 4×4×4×4</span><span class="sim-value" id="sim4x4">1-8-0-6</span></div>
-                        <div class="sim-item"><span class="sim-label">🧩 6×6×6×6</span><span class="sim-value" id="sim6x6">1-8-0-6-2-5</span></div>
-                        <div class="sim-item"><span class="sim-label">📊 直选5码</span><span class="sim-value" id="sim5">1 8 0 6 2</span></div>
-                    </div>
-                    <div style="margin-top:0.6rem; font-size:0.8rem; color:#4b6589;">
-                        <i class="fas fa-robot"></i> 基于近5期热码 & 走势模拟，点击刷新更新
-                    </div>
+                <div class="selector-group">
+                    <label for="playTypeSelect"><i class="fas fa-hand-pointer"></i> 选择打法:</label>
+                    <select id="playTypeSelect">
+                        <option value="4">4码 (热号)</option>
+                        <option value="3">3码 (前三位)</option>
+                        <option value="2">2码 (核心)</option>
+                        <option value="4x4">4×4×4×4</option>
+                        <option value="6x6">6×6×6×6</option>
+                        <option value="5">直选5码</option>
+                    </select>
+                    <button class="gen-btn" onclick="generateCustomPlay()"><i class="fas fa-play"></i> 生成</button>
+                </div>
+                <div id="customResult" class="result-display">
+                    <span class="label-tag">4码</span> 1 8 0 6
+                </div>
+                <div style="margin-top:0.4rem; font-size:0.75rem; color:#4b6589; text-align:right;">
+                    <i class="fas fa-info-circle"></i> 基于近5期历史数据生成
                 </div>
             </div>
         </div>
 
-        <!-- 右: 详细教程 -->
+        <!-- 右: 详细教程 (保持不变) -->
         <div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-chalkboard-teacher"></i> 师傅教 · 详细规律打法</div>
                 <div class="tutorial-grid" id="tutorialGrid">
-                    <!-- 画规律 -->
                     <div class="tutorial-card">
                         <h4>📐 画规律 · 走势</h4>
                         <p>统计每一位数字出现频率，标记热号(红)、冷号(蓝)。</p>
-                        <ul>
-                            <li>热号: 近10期出现≥4次</li>
-                            <li>温号: 2~3次</li>
-                            <li>冷号: 0~1次</li>
-                        </ul>
+                        <ul><li>热号: 近10期出现≥4次</li><li>温号: 2~3次</li><li>冷号: 0~1次</li></ul>
                         <div class="demo-box">📌 实战: 若百位热号 [1,8,0]，则优先考虑。</div>
                     </div>
-                    <!-- 打4码 -->
                     <div class="tutorial-card">
                         <h4>🔢 打4码 (定位胆)</h4>
                         <p>从每位选4个胆码，组成4×4×4×4=256注。</p>
-                        <ul>
-                            <li>例: 万位 {1,8,0,6}</li>
-                            <li>千位 {2,5,7,9}</li>
-                            <li>百位 {3,6,8,0}</li>
-                            <li>十位 {4,7,2,1}</li>
-                        </ul>
+                        <ul><li>例: 万位 {1,8,0,6}</li><li>千位 {2,5,7,9}</li><li>百位 {3,6,8,0}</li><li>十位 {4,7,2,1}</li></ul>
                         <div class="demo-box">✅ 覆盖广，适合稳健型。</div>
                     </div>
-                    <!-- 打3码 -->
                     <div class="tutorial-card">
                         <h4>🔢 打3码 (前/后三)</h4>
                         <p>选取前三位或后三位作为胆码，组选或直选。</p>
-                        <ul>
-                            <li>前三位: 万·千·百</li>
-                            <li>后三位: 百·十·个</li>
-                        </ul>
+                        <ul><li>前三位: 万·千·百</li><li>后三位: 百·十·个</li></ul>
                         <div class="demo-box">📌 若看好奇数位，可打 1-8-0</div>
                     </div>
-                    <!-- 打2码 -->
                     <div class="tutorial-card">
                         <h4>🔢 打2码 (核心二码)</h4>
                         <p>取两位关键数字，可做二码全包或定位。</p>
-                        <ul>
-                            <li>例: 0-6  (十位-个位)</li>
-                            <li>或 1-8 (万位-千位)</li>
-                        </ul>
+                        <ul><li>例: 0-6  (十位-个位)</li><li>或 1-8 (万位-千位)</li></ul>
                         <div class="demo-box">⚡ 适合小额博冷。</div>
                     </div>
-                    <!-- 4×4×4×4 详解 -->
                     <div class="tutorial-card border-highlight">
                         <h4>🧩 4×4×4×4 复式</h4>
                         <p>每位选4个号，共4^4=256注。 例:</p>
-                        <ul>
-                            <li>万位: 1,8,0,6</li>
-                            <li>千位: 2,5,7,9</li>
-                            <li>百位: 3,6,8,0</li>
-                            <li>十位: 4,7,2,1</li>
-                        </ul>
+                        <ul><li>万位: 1,8,0,6</li><li>千位: 2,5,7,9</li><li>百位: 3,6,8,0</li><li>十位: 4,7,2,1</li></ul>
                         <div class="demo-box">💰 投入256注，中奖概率大幅提升。</div>
                     </div>
-                    <!-- 6×6×6×6 详细教程 -->
                     <div class="tutorial-card border-6x">
                         <h4>🧩 6×6×6×6 复式 (大底覆盖)</h4>
                         <p>每位选6个号，共6^4=1296注。 适合追热号、容错高。</p>
-                        <ul>
-                            <li><strong>选号策略:</strong> 取近期每位出现频率前6的数字</li>
-                            <li><strong>示例:</strong> 万位 {1,8,0,6,2,5} · 千位 {3,7,9,4,1,0}</li>
-                            <li><strong>百位</strong> {6,8,2,5,7,3} · <strong>十位</strong> {0,4,9,1,6,8}</li>
-                            <li><strong>优势:</strong> 覆盖绝大多数热号，适合长期追号</li>
-                        </ul>
-                        <div class="demo-box">🔥 今日推荐6×6×6×6: 每位取前6热号，详见左侧推荐区</div>
+                        <ul><li><strong>选号策略:</strong> 取近期每位出现频率前6的数字</li><li><strong>示例:</strong> 万位 {1,8,0,6,2,5} · 千位 {3,7,9,4,1,0}</li><li><strong>百位</strong> {6,8,2,5,7,3} · <strong>十位</strong> {0,4,9,1,6,8}</li></ul>
+                        <div class="demo-box">🔥 今日推荐6×6×6×6: 每位取前6热号</div>
                     </div>
-                    <!-- 策略综合 -->
                     <div class="tutorial-card">
                         <h4>📊 实战策略组合</h4>
                         <p>结合遗漏、和值、跨度。 每日更新推荐。</p>
-                        <ul>
-                            <li>和值: 近5期均值 ±5</li>
-                            <li>跨度: 最大-最小</li>
-                        </ul>
+                        <ul><li>和值: 近5期均值 ±5</li><li>跨度: 最大-最小</li></ul>
                         <div class="demo-box">🔥 今日重点: 热号 0,8,6</div>
                     </div>
                 </div>
@@ -496,21 +550,7 @@
     <div class="card" id="languageMessageCard" style="background: #f2f8ff;">
         <div class="card-title"><i class="fas fa-globe"></i> <span id="langTitle">中文 / 多语言支持</span></div>
         <div id="langContent" style="font-size:0.95rem; display:flex; flex-wrap:wrap; gap:0.8rem;">
-            <span class="badge-detail">🇨🇳 中文</span>
-            <span class="badge-detail">🇬🇧 English</span>
-            <span class="badge-detail">🇪🇸 Español</span>
-            <span class="badge-detail">🇹🇷 Türkçe</span>
-            <span class="badge-detail">🇮🇹 Italiano</span>
-            <span class="badge-detail">🇮🇳 हिंदी</span>
-            <span class="badge-detail">🇰🇷 한국어</span>
-            <span class="badge-detail">🇯🇵 日本語</span>
-            <span class="badge-detail">🇻🇳 Tiếng Việt</span>
-            <span class="badge-detail">🇹🇭 ไทย</span>
-            <span class="badge-detail">🇫🇷 Français</span>
-            <span class="badge-detail">🇩🇪 Deutsch</span>
-            <span class="badge-detail">🇷🇺 Русский</span>
-            <span class="badge-detail">🇵🇹 Português</span>
-            <span class="badge-detail">🇸🇦 العربية</span>
+            <span class="badge-detail">🇨🇳 中文</span><span class="badge-detail">🇬🇧 English</span><span class="badge-detail">🇪🇸 Español</span><span class="badge-detail">🇹🇷 Türkçe</span><span class="badge-detail">🇮🇹 Italiano</span><span class="badge-detail">🇮🇳 हिंदी</span><span class="badge-detail">🇰🇷 한국어</span><span class="badge-detail">🇯🇵 日本語</span><span class="badge-detail">🇻🇳 Tiếng Việt</span><span class="badge-detail">🇹🇭 ไทย</span><span class="badge-detail">🇫🇷 Français</span><span class="badge-detail">🇩🇪 Deutsch</span><span class="badge-detail">🇷🇺 Русский</span><span class="badge-detail">🇵🇹 Português</span><span class="badge-detail">🇸🇦 العربية</span>
         </div>
         <div style="margin-top:0.4rem; color:#2d4d78;"><i class="fas fa-info-circle"></i> 当前界面语言: <span id="currentLangLabel">中文</span></div>
     </div>
@@ -561,6 +601,7 @@
             return { date: parts[0], issue: parts[1], digits: parts[2].trim().split(' '), detail: '详细' };
         });
 
+        // 渲染历史表格
         function renderHistory() {
             const tbody = document.getElementById('historyBody');
             tbody.innerHTML = '';
@@ -576,52 +617,100 @@
             });
         }
 
-        // 推荐算法 (基于热码) - 同时更新模拟选号区域
-        function generateRecommendations() {
-            if (history.length < 5) return;
-            const recent = history.slice(0, 5);
-            const allDigits = recent.flatMap(item => item.digits.map(Number));
-            function topN(arr, n=4) {
-                const freq = {};
-                arr.forEach(v => freq[v] = (freq[v]||0)+1);
-                const sorted = Object.entries(freq).sort((a,b) => b[1]-a[1]);
-                return sorted.slice(0,n).map(item => parseInt(item[0]));
-            }
-            const top4 = topN(allDigits, 4);
-            const top3 = topN(allDigits, 3);
-            const top2 = topN(allDigits, 2);
-            const top6 = topN(allDigits, 6);
-            // 直选5码: 取前5热号
-            const top5 = topN(allDigits, 5);
+        // 核心算法: 获取top N 热号 (全局)
+        function topN(arr, n=4) {
+            const freq = {};
+            arr.forEach(v => freq[v] = (freq[v]||0)+1);
+            const sorted = Object.entries(freq).sort((a,b) => b[1]-a[1]);
+            return sorted.slice(0,n).map(item => parseInt(item[0]));
+        }
 
-            // 4x4x4x4 每位取top4
+        // 获取每位 topN (用于 4x4, 6x6)
+        function posTopN(recent, n=4) {
             const posFreq = [[],[],[],[]];
             recent.forEach(item => {
                 item.digits.slice(0,4).forEach((d, idx) => {
                     posFreq[idx].push(parseInt(d));
                 });
             });
-            const posTop4 = posFreq.map(arr => topN(arr, 4));
-            const str4x4 = posTop4.map(p => p.join('')).join('-');
+            return posFreq.map(arr => topN(arr, n));
+        }
 
-            // 6x6x6x6 每位取top6
-            const posTop6 = posFreq.map(arr => topN(arr, 6));
-            const str6x6 = posTop6.map(p => p.join('')).join('-');
+        // 生成所有推荐 (供刷新使用)
+        function generateRecommendations() {
+            if (history.length < 5) return;
+            const recent = history.slice(0, 5);
+            const allDigits = recent.flatMap(item => item.digits.map(Number));
 
-            // 更新模拟选号区域
-            document.getElementById('sim4').innerText = top4.join(' ');
-            document.getElementById('sim3').innerText = top3.join(' ');
-            document.getElementById('sim2').innerText = top2.join(' ');
-            document.getElementById('sim4x4').innerText = str4x4;
-            document.getElementById('sim6x6').innerText = str6x6;
-            document.getElementById('sim5').innerText = top5.join(' ');
+            const top4 = topN(allDigits, 4);
+            const top3 = topN(allDigits, 3);
+            const top2 = topN(allDigits, 2);
+            const top6 = topN(allDigits, 6);
+            const top5 = topN(allDigits, 5);
 
-            // 也同步更新顶部的推荐卡片 (保持兼容)
+            const pos4 = posTopN(recent, 4);
+            const str4x4 = pos4.map(p => p.join('')).join('-');
+            const pos6 = posTopN(recent, 6);
+            const str6x6 = pos6.map(p => p.join('')).join('-');
+
+            // 更新智能推荐卡片
             document.getElementById('rec4').innerText = top4.join(' ');
             document.getElementById('rec3').innerText = top3.join(' ');
             document.getElementById('rec2').innerText = top2.join(' ');
             document.getElementById('rec4x4').innerText = str4x4;
             document.getElementById('rec6x6').innerText = str6x6;
+
+            // 更新自定义结果 (默认显示4码)
+            const select = document.getElementById('playTypeSelect');
+            if (select) {
+                const val = select.value;
+                updateCustomResult(val);
+            }
+        }
+
+        // 根据选中的打法更新自定义结果
+        function updateCustomResult(playType) {
+            if (history.length < 5) return;
+            const recent = history.slice(0, 5);
+            const allDigits = recent.flatMap(item => item.digits.map(Number));
+            const labelMap = {
+                '4': '4码 (热号)',
+                '3': '3码 (前三位)',
+                '2': '2码 (核心)',
+                '4x4': '4×4×4×4',
+                '6x6': '6×6×6×6',
+                '5': '直选5码'
+            };
+            let result = '';
+            let label = labelMap[playType] || '组合';
+
+            if (playType === '4') {
+                const top = topN(allDigits, 4);
+                result = top.join(' ');
+            } else if (playType === '3') {
+                const top = topN(allDigits, 3);
+                result = top.join(' ');
+            } else if (playType === '2') {
+                const top = topN(allDigits, 2);
+                result = top.join(' ');
+            } else if (playType === '4x4') {
+                const pos = posTopN(recent, 4);
+                result = pos.map(p => p.join('')).join(' - ');
+            } else if (playType === '6x6') {
+                const pos = posTopN(recent, 6);
+                result = pos.map(p => p.join('')).join(' - ');
+            } else if (playType === '5') {
+                const top = topN(allDigits, 5);
+                result = top.join(' ');
+            }
+            document.getElementById('customResult').innerHTML = `<span class="label-tag">${label}</span> ${result}`;
+        }
+
+        // 自定义生成 (点击生成按钮)
+        function generateCustomPlay() {
+            const select = document.getElementById('playTypeSelect');
+            const val = select.value;
+            updateCustomResult(val);
         }
 
         // ------- 倒计时 21:30 -------
@@ -658,10 +747,13 @@
             });
         });
 
+        // 初始化
         renderHistory();
         generateRecommendations();
-        // 暴露刷新函数到全局
+        // 暴露到全局
         window.generateRecommendations = generateRecommendations;
+        window.generateCustomPlay = generateCustomPlay;
+        window.updateCustomResult = updateCustomResult;
         console.log('排列5 智能平台已启动 | 客服 @AKMi520');
     })();
 </script>
