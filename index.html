@@ -285,6 +285,46 @@
         .border-6x {
             border-left-color: #8b5cf6;
         }
+        .refresh-btn {
+            background: #eaf1fc;
+            border: 1px solid #cbdae9;
+            border-radius: 30px;
+            padding: 0.2rem 1.2rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.8rem;
+            transition: 0.1s;
+        }
+        .refresh-btn:hover {
+            background: #d4e2f7;
+        }
+        .simulation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem 1.2rem;
+            background: #f8fcff;
+            border-radius: 20px;
+            padding: 0.8rem 1.2rem;
+            margin-top: 0.5rem;
+        }
+        .sim-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #dee8f2;
+            padding: 0.3rem 0;
+        }
+        .sim-item:last-child {
+            border-bottom: none;
+        }
+        .sim-label {
+            font-weight: 500;
+            color: #2a4b74;
+        }
+        .sim-value {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #0f2b4f;
+        }
     </style>
 </head>
 <body>
@@ -325,7 +365,7 @@
 
     <!-- 主区域 -->
     <div class="grid-2col">
-        <!-- 左: 历史 + 推荐 -->
+        <!-- 左: 历史 + 推荐 + 模拟选号 -->
         <div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-database"></i> 历史数据 · 近30期</div>
@@ -339,23 +379,29 @@
                     <i class="fas fa-arrow-up"></i> 最新数据自动更新 (2026-07-22)
                 </div>
             </div>
-            <!-- 推荐组合 -->
+
+            <!-- 模拟选号推荐 (独立卡片) -->
             <div class="card">
-                <div class="card-title"><i class="fas fa-bullseye"></i> 智能推荐 · 今日组合</div>
-                <div id="recommendationContainer">
-                    <div class="recommend-box">
-                        <div class="rec-item">🎯 4码 <span id="rec4">1 8 0 6</span></div>
-                        <div class="rec-item">🎯 3码 <span id="rec3">8 0 6</span></div>
-                        <div class="rec-item">🎯 2码 <span id="rec2">0 6</span></div>
-                        <div class="rec-item">🎯 4×4×4×4 <span id="rec4x4">1-8-0-6</span></div>
-                        <div class="rec-item">🎯 6×6×6×6 <span id="rec6x6">1-8-0-6-2-5</span></div>
+                <div class="card-title">
+                    <i class="fas fa-dice"></i> 模拟选号 · 智能推荐
+                    <button class="refresh-btn" onclick="generateRecommendations()"><i class="fas fa-sync-alt"></i> 刷新</button>
+                </div>
+                <div id="simulationContainer">
+                    <div class="simulation-grid" id="simGrid">
+                        <div class="sim-item"><span class="sim-label">🎯 4码 (热号)</span><span class="sim-value" id="sim4">1 8 0 6</span></div>
+                        <div class="sim-item"><span class="sim-label">🎯 3码 (前三位)</span><span class="sim-value" id="sim3">8 0 6</span></div>
+                        <div class="sim-item"><span class="sim-label">🎯 2码 (核心)</span><span class="sim-value" id="sim2">0 6</span></div>
+                        <div class="sim-item"><span class="sim-label">🧩 4×4×4×4</span><span class="sim-value" id="sim4x4">1-8-0-6</span></div>
+                        <div class="sim-item"><span class="sim-label">🧩 6×6×6×6</span><span class="sim-value" id="sim6x6">1-8-0-6-2-5</span></div>
+                        <div class="sim-item"><span class="sim-label">📊 直选5码</span><span class="sim-value" id="sim5">1 8 0 6 2</span></div>
                     </div>
-                    <div style="margin-top: 0.8rem; background: #eaf1fc; border-radius: 30px; padding: 0.3rem 1.2rem; display: inline-block; font-size:0.9rem;">
-                        <i class="fas fa-robot"></i> 基于近期热码 & 走势
+                    <div style="margin-top:0.6rem; font-size:0.8rem; color:#4b6589;">
+                        <i class="fas fa-robot"></i> 基于近5期热码 & 走势模拟，点击刷新更新
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- 右: 详细教程 -->
         <div>
             <div class="card">
@@ -416,7 +462,7 @@
                         </ul>
                         <div class="demo-box">💰 投入256注，中奖概率大幅提升。</div>
                     </div>
-                    <!-- 6×6×6×6 新增详细教程 -->
+                    <!-- 6×6×6×6 详细教程 -->
                     <div class="tutorial-card border-6x">
                         <h4>🧩 6×6×6×6 复式 (大底覆盖)</h4>
                         <p>每位选6个号，共6^4=1296注。 适合追热号、容错高。</p>
@@ -530,7 +576,7 @@
             });
         }
 
-        // 推荐算法 (基于热码)
+        // 推荐算法 (基于热码) - 同时更新模拟选号区域
         function generateRecommendations() {
             if (history.length < 5) return;
             const recent = history.slice(0, 5);
@@ -545,6 +591,8 @@
             const top3 = topN(allDigits, 3);
             const top2 = topN(allDigits, 2);
             const top6 = topN(allDigits, 6);
+            // 直选5码: 取前5热号
+            const top5 = topN(allDigits, 5);
 
             // 4x4x4x4 每位取top4
             const posFreq = [[],[],[],[]];
@@ -560,6 +608,15 @@
             const posTop6 = posFreq.map(arr => topN(arr, 6));
             const str6x6 = posTop6.map(p => p.join('')).join('-');
 
+            // 更新模拟选号区域
+            document.getElementById('sim4').innerText = top4.join(' ');
+            document.getElementById('sim3').innerText = top3.join(' ');
+            document.getElementById('sim2').innerText = top2.join(' ');
+            document.getElementById('sim4x4').innerText = str4x4;
+            document.getElementById('sim6x6').innerText = str6x6;
+            document.getElementById('sim5').innerText = top5.join(' ');
+
+            // 也同步更新顶部的推荐卡片 (保持兼容)
             document.getElementById('rec4').innerText = top4.join(' ');
             document.getElementById('rec3').innerText = top3.join(' ');
             document.getElementById('rec2').innerText = top2.join(' ');
@@ -603,6 +660,8 @@
 
         renderHistory();
         generateRecommendations();
+        // 暴露刷新函数到全局
+        window.generateRecommendations = generateRecommendations;
         console.log('排列5 智能平台已启动 | 客服 @AKMi520');
     })();
 </script>
